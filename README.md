@@ -12,3 +12,5 @@ Download links:
 DJI A3: [`百度网盘`](https://pan.baidu.com/s/1jJYg8R0 "DJI A3")
 
 ADIS16448: [`百度网盘`](https://pan.baidu.com/s/1dGd0mn3 "ADIS16448")
+
+3dM-GX4: [`百度网盘`](https://pan.baidu.com/s/1dGd0mn3 "GX4")
