@@ -51,41 +51,9 @@ imu_callback( const sensor_msgs::ImuConstPtr& imu_msg )
     else
     {
         double time_min = ( time - start_t ) / 60;
-        if ( time_min > 120 )
+        if ( time_min > 30 )
             end = true;
     }
-}
-
-void
-writeData( const std::string sensor_name,
-           const std::vector< double >& gyro_ts_x,
-           const std::vector< double >& gyro_d_x,
-           const std::vector< double >& gyro_d_y,
-           const std::vector< double >& gyro_d_z )
-{
-    std::ofstream out_t;
-    std::ofstream out_x;
-    std::ofstream out_y;
-    std::ofstream out_z;
-    out_t.open( "data_" + sensor_name + "_t.txt", std::ios::trunc );
-    out_x.open( "data_" + sensor_name + "_x.txt", std::ios::trunc );
-    out_y.open( "data_" + sensor_name + "_y.txt", std::ios::trunc );
-    out_z.open( "data_" + sensor_name + "_z.txt", std::ios::trunc );
-    out_t << std::setprecision( 10 );
-    out_x << std::setprecision( 10 );
-    out_y << std::setprecision( 10 );
-    out_z << std::setprecision( 10 );
-    for ( int index = 0; index < gyro_ts_x.size( ); ++index )
-    {
-        out_t << gyro_ts_x[index] << '\n';
-        out_x << gyro_d_x[index] << '\n';
-        out_y << gyro_d_y[index] << '\n';
-        out_z << gyro_d_z[index] << '\n';
-    }
-    out_t.close( );
-    out_x.close( );
-    out_y.close( );
-    out_z.close( );
 }
 
 int
@@ -96,13 +64,11 @@ main( int argc, char** argv )
     ros::console::set_logger_level( ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug );
 
     std::string IMU_TOPIC;   //= ros_utils::readParam< std::string >( n, "imu_topic" );
-    std::string IMU_NAME;    //= ros_utils::readParam< std::string >( n, "imu_topic" );
     std::string ALLAN_TOPIC; //= ros_utils::readParam< std::string >( n, "allan_topic" );
 
     //    IMU_TOPIC   = ros_utils::readParam< std::string >( n, "imu_topic" );
     //    ALLAN_TOPIC = ros_utils::readParam< std::string >( n, "allan_topic" );
-    IMU_TOPIC   = "/imu/imu";
-    IMU_NAME    = "gx4";
+    IMU_TOPIC   = "/djiros/imu";
     ALLAN_TOPIC = "gyro_x";
 
     ros::Subscriber sub_imu = n.subscribe( IMU_TOPIC, //
@@ -111,12 +77,12 @@ main( int argc, char** argv )
                                            ros::TransportHints( ).tcpNoDelay( ) );
     ros::Publisher pub = n.advertise< geometry_msgs::Vector3Stamped >( ALLAN_TOPIC, 2000 );
 
-    gyro_x = new imu::Allan( "gyro x", 10000 );
-    gyro_y = new imu::Allan( "gyro y", 10000 );
-    gyro_z = new imu::Allan( "gyro z", 10000 );
-    acc_x  = new imu::AllanAcc( "acc x", 10000 );
-    acc_y  = new imu::AllanAcc( "acc y", 10000 );
-    acc_z  = new imu::AllanAcc( "acc z", 10000 );
+    gyro_x = new imu::Allan( "gyro x", 100 );
+    gyro_y = new imu::Allan( "gyro y", 1000 );
+    gyro_z = new imu::Allan( "gyro z", 1000 );
+    acc_x  = new imu::AllanAcc( "acc x", 1000 );
+    acc_y  = new imu::AllanAcc( "acc y", 1000 );
+    acc_z  = new imu::AllanAcc( "acc z", 1000 );
     std::cout << "wait for imu data." << std::endl;
     ros::Rate loop( 100 );
 
@@ -142,12 +108,12 @@ main( int argc, char** argv )
     std::vector< double > gyro_d_z  = gyro_z->getDeviation( );
     std::vector< double > gyro_ts_z = gyro_z->getTimes( );
 
-    writeData( IMU_NAME, gyro_ts_x, gyro_d_x, gyro_d_y, gyro_d_z );
     for ( int index = 0; index < gyro_v_x.size( ); ++index )
     {
+        //        loop.sleep( );
 
-        std::cout << gyro_ts_x[index] << " " << gyro_d_x[index] << " " << gyro_d_y[index] << " "
-                  << gyro_d_z[index] << std::endl;
+        std::cout << "x " << gyro_ts_x[index] << " " << gyro_d_x[index] << " " << gyro_d_y[index]
+                  << " " << gyro_d_z[index] << std::endl;
 
         geometry_msgs::Vector3Stamped v_t;
         v_t.header.frame_id = "body";
@@ -159,23 +125,23 @@ main( int argc, char** argv )
         //        std::cout << "z " << index << " " << v_z[index] << std::endl;
     }
 
-    //    FitAllan fit_x( gyro_v_x, gyro_ts_x );
-    //    std::cout << "-------------------" << std::endl;
-    //    std::cout << "Gyro X " << std::endl;
-    //    std::cout << "     Q " << fit_x.getQ( ) << std::endl;
-    //    std::cout << "     N " << fit_x.getN( ) << std::endl;
-    //    std::cout << "     B " << fit_x.getB( ) << std::endl;
-    //    std::cout << "     K " << fit_x.getK( ) << std::endl;
-    //    std::cout << "     R " << fit_x.getR( ) << std::endl;
-
-    FitAllan fit_y( gyro_v_y, gyro_ts_y );
+    FitAllan fit_x( gyro_v_x, gyro_ts_x );
     std::cout << "-------------------" << std::endl;
-    std::cout << "Gyro y " << std::endl;
-    std::cout << "     Q " << fit_y.getQ( ) << std::endl;
-    std::cout << "     N " << fit_y.getN( ) << std::endl;
-    std::cout << "     B " << fit_y.getB( ) << std::endl;
-    std::cout << "     K " << fit_y.getK( ) << std::endl;
-    std::cout << "     R " << fit_y.getR( ) << std::endl;
+    std::cout << "Gyro X " << std::endl;
+    std::cout << "     Q " << fit_x.getQ( ) << std::endl;
+    std::cout << "     N " << fit_x.getN( ) << std::endl;
+    std::cout << "     B " << fit_x.getB( ) << std::endl;
+    std::cout << "     K " << fit_x.getK( ) << std::endl;
+    std::cout << "     R " << fit_x.getR( ) << std::endl;
+
+    //    FitAllan fit_y( gyro_v_y, gyro_ts_y );
+    //    std::cout << "-------------------" << std::endl;
+    //    std::cout << "Gyro y " << std::endl;
+    //    std::cout << "     Q " << fit_y.getQ( ) << std::endl;
+    //    std::cout << "     N " << fit_y.getN( ) << std::endl;
+    //    std::cout << "     B " << fit_y.getB( ) << std::endl;
+    //    std::cout << "     K " << fit_y.getK( ) << std::endl;
+    //    std::cout << "     R " << fit_y.getR( ) << std::endl;
 
     //    FitAllan fit_z( gyro_v_z, gyro_ts_z );
     //    std::cout << "-------------------" << std::endl;
@@ -193,22 +159,21 @@ main( int argc, char** argv )
     //    std::cout << "-------------------" << std::endl;
     //    std::cout << "-------------------" << std::endl;
 
-    acc_x->calc( );
-    std::vector< double > acc_v_x  = acc_x->getVariance( );
-    std::vector< double > acc_d_x  = acc_x->getDeviation( );
-    std::vector< double > acc_ts_x = acc_x->getTimes( );
+    //    acc_x->calc( );
+    //    std::vector< double > acc_v_x  = acc_x->getVariance( );
+    //    std::vector< double > acc_d_x  = acc_x->getDeviation( );
+    //    std::vector< double > acc_ts_x = acc_x->getTimes( );
 
-    acc_y->calc( );
-    std::vector< double > acc_v_y  = acc_y->getVariance( );
-    std::vector< double > acc_d_y  = acc_y->getDeviation( );
-    std::vector< double > acc_ts_y = acc_y->getTimes( );
+    //    acc_y->calc( );
+    //    std::vector< double > acc_v_y  = acc_y->getVariance( );
+    //    std::vector< double > acc_d_y  = acc_y->getDeviation( );
+    //    std::vector< double > acc_ts_y = acc_y->getTimes( );
 
-    acc_z->calc( );
-    std::vector< double > acc_v_z  = acc_z->getVariance( );
-    std::vector< double > acc_d_z  = acc_z->getDeviation( );
-    std::vector< double > acc_ts_z = acc_z->getTimes( );
+    //    acc_z->calc( );
+    //    std::vector< double > acc_v_z  = acc_z->getVariance( );
+    //    std::vector< double > acc_d_z  = acc_z->getDeviation( );
+    //    std::vector< double > acc_ts_z = acc_z->getTimes( );
 
-    writeData( IMU_NAME + "_acc", acc_ts_x, acc_d_x, acc_d_y, acc_d_z );
     //    for ( int index = 0; index < acc_v_x.size( ); ++index )
     //    {
     //        loop.sleep( );

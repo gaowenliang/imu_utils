@@ -1,5 +1,5 @@
-#ifndef ALLAN_H
-#define ALLAN_H
+#ifndef AllanAcc_H
+#define AllanAcc_H
 
 #include "type.h"
 #include <iostream>
@@ -9,14 +9,14 @@
 namespace imu
 {
 
-class Allan
+class AllanAcc
 {
     public:
-    Allan( std::string name, int maxCluster = 10000 );
-    ~Allan( );
+    AllanAcc( std::string name, int maxCluster = 10000 );
+    ~AllanAcc( );
     void pushRadPerSec( double data, double time );
     void pushDegreePerSec( double data, double time );
-    void pushDegreePerHou( double data, double time );
+    void push( double data, double time );
     void calc( );
 
     std::vector< double > getVariance( ) const;
@@ -37,7 +37,7 @@ class Allan
 
     std::string m_name;
     int numData;
-    std::vector< GyrData > m_rawData;
+    std::vector< AccData > m_rawData;
     std::vector< double > m_thetas;
     int numCluster;
     int numFactors;
@@ -47,4 +47,4 @@ class Allan
 };
 }
 
-#endif // ALLAN_H
+#endif // AllanAcc_H

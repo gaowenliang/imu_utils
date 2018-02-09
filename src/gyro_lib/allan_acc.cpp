@@ -1,6 +1,6 @@
-#include "allan.h"
+#include "allan_acc.h".h "
 
-imu::Allan::Allan( std::string name, int maxCluster )
+imu::AllanAcc::AllanAcc( std::string name, int maxCluster )
 : m_name( name )
 , numData( 0 )
 , numCluster( maxCluster )
@@ -9,7 +9,7 @@ imu::Allan::Allan( std::string name, int maxCluster )
               << " num of Cluster " << numCluster << std::endl;
 }
 
-imu::Allan::~Allan( )
+imu::AllanAcc::~AllanAcc( )
 {
     m_rawData.clear( );
     m_thetas.clear( );
@@ -17,28 +17,28 @@ imu::Allan::~Allan( )
 }
 
 void
-imu::Allan::pushRadPerSec( double data, double time )
+imu::AllanAcc::pushRadPerSec( double data, double time )
 {
-    m_rawData.push_back( GyrData( data * 57.3 * 3600, time ) );
+    m_rawData.push_back( AccData( data * 57.3 * 3600, time ) );
     numData++;
 }
 
 void
-imu::Allan::pushDegreePerSec( double data, double time )
+imu::AllanAcc::pushDegreePerSec( double data, double time )
 {
-    m_rawData.push_back( GyrData( data * 3600, time ) );
+    m_rawData.push_back( AccData( data * 3600, time ) );
     numData++;
 }
 
 void
-imu::Allan::pushDegreePerHou( double data, double time )
+imu::AllanAcc::push( double data, double time )
 {
-    m_rawData.push_back( GyrData( data, time ) );
+    m_rawData.push_back( AccData( data * 3600, time ) );
     numData++;
 }
 
 void
-imu::Allan::calc( )
+imu::AllanAcc::calc( )
 {
     std::cout << m_name << " "
               << " numData " << numData << std::endl;
@@ -78,13 +78,13 @@ imu::Allan::calc( )
 }
 
 std::vector< double >
-imu::Allan::getVariance( ) const
+imu::AllanAcc::getVariance( ) const
 {
     return mVariance;
 }
 
 std::vector< double >
-imu::Allan::getDeviation( )
+imu::AllanAcc::getDeviation( )
 {
     double period = getAvgPeriod( );
 
@@ -99,7 +99,7 @@ imu::Allan::getDeviation( )
 }
 
 std::vector< double >
-imu::Allan::getTimes( )
+imu::AllanAcc::getTimes( )
 {
     double period = getAvgPeriod( );
     std::vector< double > time( numFactors, 0.0 );
@@ -113,13 +113,13 @@ imu::Allan::getTimes( )
 }
 
 std::vector< int >
-imu::Allan::getFactors( ) const
+imu::AllanAcc::getFactors( ) const
 {
     return mFactors;
 }
 
 std::vector< double >
-imu::Allan::calcVariance( double period )
+imu::AllanAcc::calcVariance( double period )
 {
     std::vector< double > sigma2( numFactors, 0.0 );
 
@@ -148,21 +148,21 @@ imu::Allan::calcVariance( double period )
 }
 
 std::vector< double >
-imu::Allan::calcThetas( const double freq )
+imu::AllanAcc::calcThetas( const double freq )
 {
     std::vector< double > thetas;
 
     double sum = 0;
-    for ( auto& gyro : m_rawData )
+    for ( auto& acc : m_rawData )
     {
-        sum += gyro.w;
+        sum += acc.a;
         thetas.push_back( sum / freq );
     }
     return thetas;
 }
 
 void
-imu::Allan::initStrides( )
+imu::AllanAcc::initStrides( )
 {
 
     int mode               = numData / 2;
@@ -213,7 +213,7 @@ imu::Allan::initStrides( )
 }
 
 std::vector< double >
-imu::Allan::getLogSpace( float a, float b )
+imu::AllanAcc::getLogSpace( float a, float b )
 {
     std::vector< double > logSpace;
 
@@ -232,16 +232,16 @@ imu::Allan::getLogSpace( float a, float b )
 }
 
 double
-imu::Allan::getAvgDt( )
+imu::AllanAcc::getAvgDt( )
 {
     double sum_dt  = 0.0;
     double start_t = m_rawData[0].t;
     bool first     = true;
-    for ( auto& gyro : m_rawData )
+    for ( auto& acc : m_rawData )
     {
         if ( !first )
-            sum_dt += ( gyro.t - start_t );
-        start_t = gyro.t;
+            sum_dt += ( acc.t - start_t );
+        start_t = acc.t;
         first   = false;
     }
     return sum_dt / ( numData - 1 );

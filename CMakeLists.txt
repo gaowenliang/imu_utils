@@ -34,6 +34,17 @@ catkin_package()
 add_executable(gyro_test
     src/gyro_an.cpp
     src/gyro_lib/allan.cpp
+    src/gyro_lib/allan_acc.cpp
+    src/gyro_lib/fitallan.cpp
     )
 
 target_link_libraries(gyro_test dw ${catkin_LIBRARIES} ${OpenCV_LIBS} ${CERES_LIBRARIES})
+
+add_executable(gyro_test2
+    src/gyro_an2.cpp
+    src/gyro_lib/allan.cpp
+    src/gyro_lib/allan_acc.cpp
+    src/gyro_lib/fitallan.cpp
+    )
+
+target_link_libraries(gyro_test2 dw ${catkin_LIBRARIES} ${OpenCV_LIBS} ${CERES_LIBRARIES})
