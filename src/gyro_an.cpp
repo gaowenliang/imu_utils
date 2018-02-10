@@ -26,8 +26,10 @@ imu::AllanAcc* acc_x;
 imu::AllanAcc* acc_y;
 imu::AllanAcc* acc_z;
 double start_t;
-bool start = true;
-bool end   = false;
+bool start       = true;
+bool end         = false;
+int max_time_min = 10;
+std::string data_save_path;
 
 void
 imu_callback( const sensor_msgs::ImuConstPtr& imu_msg )
@@ -51,7 +53,7 @@ imu_callback( const sensor_msgs::ImuConstPtr& imu_msg )
     else
     {
         double time_min = ( time - start_t ) / 60;
-        if ( time_min > 120 )
+        if ( time_min > max_time_min )
             end = true;
     }
 }
@@ -67,10 +69,10 @@ writeData( const std::string sensor_name,
     std::ofstream out_x;
     std::ofstream out_y;
     std::ofstream out_z;
-    out_t.open( "data_" + sensor_name + "_t.txt", std::ios::trunc );
-    out_x.open( "data_" + sensor_name + "_x.txt", std::ios::trunc );
-    out_y.open( "data_" + sensor_name + "_y.txt", std::ios::trunc );
-    out_z.open( "data_" + sensor_name + "_z.txt", std::ios::trunc );
+    out_t.open( data_save_path + "data_" + sensor_name + "_t.txt", std::ios::trunc );
+    out_x.open( data_save_path + "data_" + sensor_name + "_x.txt", std::ios::trunc );
+    out_y.open( data_save_path + "data_" + sensor_name + "_y.txt", std::ios::trunc );
+    out_z.open( data_save_path + "data_" + sensor_name + "_z.txt", std::ios::trunc );
     out_t << std::setprecision( 10 );
     out_x << std::setprecision( 10 );
     out_y << std::setprecision( 10 );
@@ -95,28 +97,28 @@ main( int argc, char** argv )
     ros::NodeHandle n( "~" );
     ros::console::set_logger_level( ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug );
 
-    std::string IMU_TOPIC;   //= ros_utils::readParam< std::string >( n, "imu_topic" );
-    std::string IMU_NAME;    //= ros_utils::readParam< std::string >( n, "imu_topic" );
-    std::string ALLAN_TOPIC; //= ros_utils::readParam< std::string >( n, "allan_topic" );
+    std::string IMU_TOPIC;
+    std::string IMU_NAME;
+    int max_cluster;
 
-    //    IMU_TOPIC   = ros_utils::readParam< std::string >( n, "imu_topic" );
-    //    ALLAN_TOPIC = ros_utils::readParam< std::string >( n, "allan_topic" );
-    IMU_TOPIC   = "/imu/imu";
-    IMU_NAME    = "gx4";
-    ALLAN_TOPIC = "gyro_x";
+    IMU_TOPIC      = ros_utils::readParam< std::string >( n, "imu_topic" );
+    IMU_NAME       = ros_utils::readParam< std::string >( n, "imu_name" );
+    data_save_path = ros_utils::readParam< std::string >( n, "data_save_path" );
+    max_time_min   = ros_utils::readParam< int >( n, "max_time_min" );
+    max_cluster    = ros_utils::readParam< int >( n, "max_cluster" );
 
     ros::Subscriber sub_imu = n.subscribe( IMU_TOPIC, //
                                            20000000,
                                            imu_callback,
                                            ros::TransportHints( ).tcpNoDelay( ) );
-    ros::Publisher pub = n.advertise< geometry_msgs::Vector3Stamped >( ALLAN_TOPIC, 2000 );
+    //    ros::Publisher pub = n.advertise< geometry_msgs::Vector3Stamped >( ALLAN_TOPIC, 2000 );
 
-    gyro_x = new imu::Allan( "gyro x", 10000 );
-    gyro_y = new imu::Allan( "gyro y", 10000 );
-    gyro_z = new imu::Allan( "gyro z", 10000 );
-    acc_x  = new imu::AllanAcc( "acc x", 10000 );
-    acc_y  = new imu::AllanAcc( "acc y", 10000 );
-    acc_z  = new imu::AllanAcc( "acc z", 10000 );
+    gyro_x = new imu::Allan( "gyro x", max_cluster );
+    gyro_y = new imu::Allan( "gyro y", max_cluster );
+    gyro_z = new imu::Allan( "gyro z", max_cluster );
+    acc_x  = new imu::AllanAcc( "acc x", max_cluster );
+    acc_y  = new imu::AllanAcc( "acc y", max_cluster );
+    acc_z  = new imu::AllanAcc( "acc z", max_cluster );
     std::cout << "wait for imu data." << std::endl;
     ros::Rate loop( 100 );
 
@@ -148,12 +150,6 @@ main( int argc, char** argv )
 
         std::cout << gyro_ts_x[index] << " " << gyro_d_x[index] << " " << gyro_d_y[index] << " "
                   << gyro_d_z[index] << std::endl;
-
-        geometry_msgs::Vector3Stamped v_t;
-        v_t.header.frame_id = "body";
-        v_t.header.stamp    = ros::Time::now( );
-        v_t.vector.x        = gyro_d_x[index];
-        pub.publish( v_t );
 
         //        std::cout << "y " << index << " " << v_y[index] << std::endl;
         //        std::cout << "z " << index << " " << v_z[index] << std::endl;

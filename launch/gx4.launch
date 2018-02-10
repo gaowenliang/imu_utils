@@ -1,0 +1,13 @@
+<launch>
+
+    <node pkg="imu_utils" type="gyro_test" name="gyro_test" output="screen">
+        <param name="imu_topic" type="string" value= "/imu/imu"/>
+        <param name="imu_name" type="string" value= "gx4"/>
+        <param name="data_save_path" type="string" value= "/home/gao/ws/src/imu_utils/data/"/>
+        <param name="max_time_min" type="int" value= "30"/>
+        <param name="max_cluster" type="int" value= "100"/>
+    </node>
+
+
+
+</launch>
