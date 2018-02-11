@@ -10,7 +10,7 @@ refrence Matlab code: [`GyroAllan`](https://github.com/XinLiGitHub/GyroAllan "Gy
 
 ## sample test
 
-<img src="figure/imu.png">
+<img src="figure/imu.jpg">
 
 * blue  : Vi-Sensor, ADIS16448, `200Hz`
 * red   : 3dm-Gx4, `500Hz`
