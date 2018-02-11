@@ -16,7 +16,7 @@ class AllanAcc
     ~AllanAcc( );
     void pushRadPerSec( double data, double time );
     void pushDegreePerSec( double data, double time );
-    void push( double data, double time );
+    void pushMPerSec2( double data, double time );
     void calc( );
 
     std::vector< double > getVariance( ) const;

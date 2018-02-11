@@ -41,9 +41,9 @@ imu_callback( const sensor_msgs::ImuConstPtr& imu_msg )
     gyro_x->pushRadPerSec( imu_msg->angular_velocity.x, time );
     gyro_y->pushRadPerSec( imu_msg->angular_velocity.y, time );
     gyro_z->pushRadPerSec( imu_msg->angular_velocity.z, time );
-    acc_x->push( imu_msg->linear_acceleration.x, time );
-    acc_y->push( imu_msg->linear_acceleration.y, time );
-    acc_z->push( imu_msg->linear_acceleration.z, time );
+    acc_x->pushMPerSec2( imu_msg->linear_acceleration.x, time );
+    acc_y->pushMPerSec2( imu_msg->linear_acceleration.y, time );
+    acc_z->pushMPerSec2( imu_msg->linear_acceleration.z, time );
 
     if ( start )
     {
@@ -165,7 +165,6 @@ main( int argc, char** argv )
     std::vector< double > gyro_ts_z = gyro_z->getTimes( );
 
     FitAllan fit_x( gyro_v_x, gyro_ts_x );
-    std::cout << "-------------------" << std::endl;
     std::cout << "Gyro X " << std::endl;
     std::cout << "     Q " << fit_x.getQ( ) << std::endl;
     std::cout << "     N " << fit_x.getN( ) << std::endl;
@@ -173,9 +172,9 @@ main( int argc, char** argv )
     std::cout << "     K " << fit_x.getK( ) << std::endl;
     std::cout << "     R " << fit_x.getR( ) << std::endl;
     std::cout << "  bias " << gyro_x->getAvgValue( ) / 3600 << " degree/s" << std::endl;
+    std::cout << "-------------------" << std::endl;
 
     FitAllan fit_y( gyro_v_y, gyro_ts_y );
-    std::cout << "-------------------" << std::endl;
     std::cout << "Gyro y " << std::endl;
     std::cout << "     Q " << fit_y.getQ( ) << std::endl;
     std::cout << "     N " << fit_y.getN( ) << std::endl;
@@ -183,9 +182,9 @@ main( int argc, char** argv )
     std::cout << "     K " << fit_y.getK( ) << std::endl;
     std::cout << "     R " << fit_y.getR( ) << std::endl;
     std::cout << "  bias " << gyro_y->getAvgValue( ) / 3600 << " degree/s" << std::endl;
+    std::cout << "-------------------" << std::endl;
 
     FitAllan fit_z( gyro_v_z, gyro_ts_z );
-    std::cout << "-------------------" << std::endl;
     std::cout << "Gyro z " << std::endl;
     std::cout << "     Q " << fit_z.getQ( ) << std::endl;
     std::cout << "     N " << fit_z.getN( ) << std::endl;
@@ -193,6 +192,7 @@ main( int argc, char** argv )
     std::cout << "     K " << fit_z.getK( ) << std::endl;
     std::cout << "     R " << fit_z.getR( ) << std::endl;
     std::cout << "  bias " << gyro_z->getAvgValue( ) / 3600 << " degree/s" << std::endl;
+    std::cout << "-------------------" << std::endl;
 
     std::vector< double > gyro_sim_d_x = fit_x.calcSimDeviation( gyro_ts_x );
     std::vector< double > gyro_sim_d_y = fit_y.calcSimDeviation( gyro_ts_y );
@@ -200,25 +200,9 @@ main( int argc, char** argv )
 
     writeData3( IMU_NAME + "_sim", gyro_ts_x, gyro_sim_d_x, gyro_sim_d_y, gyro_sim_d_z );
     writeData3( IMU_NAME, gyro_ts_x, gyro_d_x, gyro_d_y, gyro_d_z );
-    //    for ( int index = 0; index < gyro_v_x.size( ); ++index )
-    //    {
-    //        std::cout << gyro_ts_x[index] << " " << gyro_d_y[index] << " " <<
-    //        gyro_sim_d_y[index] << std::endl;
 
-    //        std::cout << gyro_ts_x[index] << " " << gyro_d_x[index] << " " <<
-    //        gyro_d_y[index] << " "
-    //                  << gyro_d_z[index] << std::endl;
-
-    //        std::cout << "y " << index << " " << v_y[index] << std::endl;
-    //        std::cout << "z " << index << " " << v_z[index] << std::endl;
-    //    }
-
-    //    std::cout << "-------------------" << std::endl;
-    //    std::cout << "-------------------" << std::endl;
-    //    std::cout << "-------------------" << std::endl;
-    //    std::cout << "-------------------" << std::endl;
-    //    std::cout << "-------------------" << std::endl;
-    //    std::cout << "-------------------" << std::endl;
+    std::cout << "==============================================" << std::endl;
+    std::cout << "==============================================" << std::endl;
 
     acc_x->calc( );
     std::vector< double > acc_v_x  = acc_x->getVariance( );
@@ -235,51 +219,37 @@ main( int argc, char** argv )
     std::vector< double > acc_d_z  = acc_z->getDeviation( );
     std::vector< double > acc_ts_z = acc_z->getTimes( );
 
+    FitAllan fit_x_acc( acc_v_x, acc_ts_x );
+    std::cout << "acc X " << std::endl;
+    std::cout << "     Q " << fit_x_acc.getQ( ) << std::endl;
+    std::cout << "     N " << fit_x_acc.getN( ) << std::endl;
+    std::cout << "     B " << fit_x_acc.getB( ) << std::endl;
+    std::cout << "     K " << fit_x_acc.getK( ) << std::endl;
+    std::cout << "     R " << fit_x_acc.getR( ) << std::endl;
+    std::cout << "-------------------" << std::endl;
+
+    FitAllan fit_y_acc( acc_v_y, acc_ts_y );
+    std::cout << "acc y " << std::endl;
+    std::cout << "     Q " << fit_y_acc.getQ( ) << std::endl;
+    std::cout << "     N " << fit_y_acc.getN( ) << std::endl;
+    std::cout << "     B " << fit_y_acc.getB( ) << std::endl;
+    std::cout << "     K " << fit_y_acc.getK( ) << std::endl;
+    std::cout << "     R " << fit_y_acc.getR( ) << std::endl;
+    std::cout << "-------------------" << std::endl;
+
+    FitAllan fit_z_acc( acc_v_z, acc_ts_z );
+    std::cout << "acc z " << std::endl;
+    std::cout << "     Q " << fit_z_acc.getQ( ) << std::endl;
+    std::cout << "     N " << fit_z_acc.getN( ) << std::endl;
+    std::cout << "     B " << fit_z_acc.getB( ) << std::endl;
+    std::cout << "     K " << fit_z_acc.getK( ) << std::endl;
+    std::cout << "     R " << fit_z_acc.getR( ) << std::endl;
+    std::cout << "-------------------" << std::endl;
+    std::vector< double > acc_sim_d_x = fit_x_acc.calcSimDeviation( acc_ts_x );
+    std::vector< double > acc_sim_d_y = fit_x_acc.calcSimDeviation( acc_ts_x );
+    std::vector< double > acc_sim_d_z = fit_x_acc.calcSimDeviation( acc_ts_x );
+    writeData3( IMU_NAME + "_sim_acc", acc_ts_x, acc_sim_d_x, acc_sim_d_y, acc_sim_d_z );
     writeData3( IMU_NAME + "_acc", acc_ts_x, acc_d_x, acc_d_y, acc_d_z );
-    //    for ( int index = 0; index < acc_v_x.size( ); ++index )
-    //    {
-    //        loop.sleep( );
-
-    //        std::cout << "x " << acc_ts_x[index] << " " << acc_d_x[index] << " " <<
-    //        acc_d_y[index]
-    //                  << " " << acc_d_z[index] << std::endl;
-
-    //        geometry_msgs::Vector3Stamped v_t;
-    //        v_t.header.frame_id = "body";
-    //        v_t.header.stamp    = ros::Time::now( );
-    //        v_t.vector.x        = d_x[index];
-    //        pub.publish( v_t );
-
-    //        std::cout << "y " << index << " " << v_y[index] << std::endl;
-    //        std::cout << "z " << index << " " << v_z[index] << std::endl;
-    //    }
-
-    //    FitAllan fit_x_acc( acc_v_x, acc_ts_x );
-    //    std::cout << "-------------------" << std::endl;
-    //    std::cout << "acc X " << std::endl;
-    //    std::cout << "     Q " << fit_x_acc.getQ( ) << std::endl;
-    //    std::cout << "     N " << fit_x_acc.getN( ) << std::endl;
-    //    std::cout << "     B " << fit_x_acc.getB( ) << std::endl;
-    //    std::cout << "     K " << fit_x_acc.getK( ) << std::endl;
-    //    std::cout << "     R " << fit_x_acc.getR( ) << std::endl;
-
-    //    FitAllan fit_y_acc( acc_v_y, acc_ts_y );
-    //    std::cout << "-------------------" << std::endl;
-    //    std::cout << "acc y " << std::endl;
-    //    std::cout << "     Q " << fit_y_acc.getQ( ) << std::endl;
-    //    std::cout << "     N " << fit_y_acc.getN( ) << std::endl;
-    //    std::cout << "     B " << fit_y_acc.getB( ) << std::endl;
-    //    std::cout << "     K " << fit_y_acc.getK( ) << std::endl;
-    //    std::cout << "     R " << fit_y_acc.getR( ) << std::endl;
-
-    //    FitAllan fit_z_acc( acc_v_z, acc_ts_z );
-    //    std::cout << "-------------------" << std::endl;
-    //    std::cout << "acc z " << std::endl;
-    //    std::cout << "     Q " << fit_z_acc.getQ( ) << std::endl;
-    //    std::cout << "     N " << fit_z_acc.getN( ) << std::endl;
-    //    std::cout << "     B " << fit_z_acc.getB( ) << std::endl;
-    //    std::cout << "     K " << fit_z_acc.getK( ) << std::endl;
-    //    std::cout << "     R " << fit_z_acc.getR( ) << std::endl;
 
     return 0;
 }

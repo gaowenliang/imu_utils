@@ -1,42 +1,49 @@
 clear 
 close all
 
-dt = dlmread('data/data_A3_acc_t.txt');         %´ÓÎÄ±¾ÖÐ¶ÁÈ¡Êý¾Ý£¬µ¥Î»£ºdeg/s£¬ËÙÂÊ£º100Hz
-data_x = dlmread('data/data_A3_acc_x.txt'); 
-data_y= dlmread('data/data_A3_acc_y.txt'); 
-data_z = dlmread('data/data_A3_acc_z.txt'); 
+dt = dlmread('data/data_A3_t.txt');         %ï¿½ï¿½ï¿½Ä±ï¿½ï¿½Ð¶ï¿½È¡ï¿½ï¿½Ý£ï¿½ï¿½ï¿½Î»ï¿½ï¿½deg/sï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½100Hz
+data_x = dlmread('data/data_A3_x.txt'); 
+data_y= dlmread('data/data_A3_y.txt'); 
+data_z = dlmread('data/data_A3_z.txt'); 
+data_draw=[data_x  ] ;
 
-data_draw=[data_x data_y data_z] ;
+data_sim_x= dlmread('data/data_A3_sim_x.txt'); 
+data_sim_y= dlmread('data/data_A3_sim_y.txt'); 
+data_sim_z= dlmread('data/data_A3_sim_z.txt'); 
+data_sim_draw=[data_sim_x  ] ;
+
+
 figure
 loglog(dt, data_draw , '*');
-xlabel('time:sec');                 %Ìí¼ÓxÖá±êÇ©
-% ylabel('Sigma:deg/h');              %Ìí¼ÓyÖá±êÇ©
-legend('acc x','acc y','acc z');       %Ìí¼Ó±ê×¢
-grid on;                            %Ìí¼ÓÍø¸ñÏß
-hold on;                            %Ê¹Í¼Ïñ²»±»¸²¸Ç
+xlabel('time:sec');                 %ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½Ç©
+% ylabel('Sigma:deg/h');              %ï¿½ï¿½ï¿½yï¿½ï¿½ï¿½Ç©
+legend('x','y','z');       %ï¿½ï¿½Ó±ï¿½×¢
+grid on;                            %ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+hold on;                            %Ê¹Í¼ï¿½ñ²»±ï¿½ï¿½ï¿½ï¿½ï¿½
+loglog(dt, data_sim_draw , '-');
 
-CC(1, :) = fit_allan(sqrt(dt'), data_x', 2)';   %ÄâºÏ
-CC(2, :) = fit_allan(sqrt(dt'), data_y', 2)';   %ÄâºÏ
-CC(3, :) = fit_allan(sqrt(dt'), data_z', 2)';   %ÄâºÏ
+CC(1, :) = fit_allan(sqrt(dt'), data_x', 2)';   %ï¿½ï¿½ï¿½
+CC(2, :) = fit_allan(sqrt(dt'), data_y', 2)';   %ï¿½ï¿½ï¿½
+CC(3, :) = fit_allan(sqrt(dt'), data_z', 2)';   %ï¿½ï¿½ï¿½
 
 disp (CC);
 
-Q = abs(CC(:, 1)) / sqrt(3);         %Á¿»¯ÔëÉù£¬µ¥Î»£ºarcsec
-N = abs(CC(:, 2)) / 60;	            %½Ç¶ÈËæ»úÓÎ×ß£¬µ¥Î»£ºdeg/h^0.5
-Bs = abs(CC(:, 3)) / 0.6643;	        %ÁãÆ«²»ÎÈ¶¨ÐÔ£¬µ¥Î»£ºdeg/h
-K = abs(CC(:, 4)) * sqrt(3) * 60;	%½ÇËÙÂÊÓÎ×ß£¬µ¥Î»£ºdeg/h/h^0.5
-R = abs(CC(:, 5)) * sqrt(2) * 3600;	%ËÙÂÊÐ±ÆÂ£¬µ¥Î»£ºdeg/h/h
+Q = abs(CC(:, 1)) / sqrt(3);         %ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½arcsec
+N = abs(CC(:, 2)) / 60;	            %ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½Î»ï¿½ï¿½deg/h^0.5
+Bs = abs(CC(:, 3)) / 0.6643;	        %ï¿½ï¿½Æ«ï¿½ï¿½ï¿½È¶ï¿½ï¿½Ô£ï¿½ï¿½ï¿½Î»ï¿½ï¿½deg/h
+K = abs(CC(:, 4)) * sqrt(3) * 60;	%ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½Î»ï¿½ï¿½deg/h/h^0.5
+R = abs(CC(:, 5)) * sqrt(2) * 3600;	%ï¿½ï¿½ï¿½ï¿½Ð±ï¿½Â£ï¿½ï¿½ï¿½Î»ï¿½ï¿½deg/h/h
 
-fprintf('16448\n');
-fprintf('Á¿»¯ÔëÉù      XÖá£º%f YÖá£º%f ZÖá£º%f  µ¥Î»£ºarcsec\n', Q(1), Q(2), Q(3));
-fprintf('½Ç¶ÈËæ»úÓÎ×ß  XÖá£º%f YÖá£º%f ZÖá£º%f  µ¥Î»£ºdeg/h^0.5\n', N(1), N(2), N(3));
-fprintf('ÁãÆ«²»ÎÈ¶¨ÐÔ  XÖá£º%f YÖá£º%f ZÖá£º%f  µ¥Î»£ºdeg/h\n', Bs(1), Bs(2), Bs(3));
-fprintf('½ÇËÙÂÊÓÎ×ß    XÖá£º%f YÖá£º%f ZÖá£º%f  µ¥Î»£ºdeg/h/h^0.5\n', K(1), K(2), K(3));
-fprintf('ËÙÂÊÐ±ÆÂ      XÖá£º%f YÖá£º%f ZÖá£º%f  µ¥Î»£ºdeg/h/h\n', R(1), R(2), R(3));
+fprintf('A3\n');
+fprintf('ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½      Xï¿½á£º%f Yï¿½á£º%f Zï¿½á£º%f  ï¿½ï¿½Î»ï¿½ï¿½arcsec\n', Q(1), Q(2), Q(3));
+fprintf('ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  Xï¿½á£º%f Yï¿½á£º%f Zï¿½á£º%f  ï¿½ï¿½Î»ï¿½ï¿½deg/h^0.5\n', N(1), N(2), N(3));
+fprintf('ï¿½ï¿½Æ«ï¿½ï¿½ï¿½È¶ï¿½ï¿½ï¿½  Xï¿½á£º%f Yï¿½á£º%f Zï¿½á£º%f  ï¿½ï¿½Î»ï¿½ï¿½deg/h\n', Bs(1), Bs(2), Bs(3));
+fprintf('ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½    Xï¿½á£º%f Yï¿½á£º%f Zï¿½á£º%f  ï¿½ï¿½Î»ï¿½ï¿½deg/h/h^0.5\n', K(1), K(2), K(3));
+fprintf('ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½      Xï¿½á£º%f Yï¿½á£º%f Zï¿½á£º%f  ï¿½ï¿½Î»ï¿½ï¿½deg/h/h\n', R(1), R(2), R(3));
 fprintf('---------------------------------------\n');
 
-DD(:, 1) = CC(1, 1)*sqrt(dt).^(-2) + CC(1, 2)*sqrt(dt).^(-1) + CC(1, 3)*sqrt(dt).^(0) + CC(1, 4)*sqrt(dt).^(1) + CC(1, 5)*sqrt(dt).^(2);    %Éú³ÉÄâºÏº¯Êý
-DD(:, 2) = CC(2, 1)*sqrt(dt).^(-2) + CC(2, 2)*sqrt(dt).^(-1) + CC(2, 3)*sqrt(dt).^(0) + CC(2, 4)*sqrt(dt).^(1) + CC(2, 5)*sqrt(dt).^(2);    %Éú³ÉÄâºÏº¯Êý
-DD(:, 3) = CC(3, 1)*sqrt(dt).^(-2) + CC(3, 2)*sqrt(dt).^(-1) + CC(3, 3)*sqrt(dt).^(0) + CC(3, 4)*sqrt(dt).^(1) + CC(3, 5)*sqrt(dt).^(2);    %Éú³ÉÄâºÏº¯Êý
+DD(:, 1) = CC(1, 1)*sqrt(dt).^(-2) + CC(1, 2)*sqrt(dt).^(-1) + CC(1, 3)*sqrt(dt).^(0) + CC(1, 4)*sqrt(dt).^(1) + CC(1, 5)*sqrt(dt).^(2);    %ï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½ï¿½ï¿½
+DD(:, 2) = CC(2, 1)*sqrt(dt).^(-2) + CC(2, 2)*sqrt(dt).^(-1) + CC(2, 3)*sqrt(dt).^(0) + CC(2, 4)*sqrt(dt).^(1) + CC(2, 5)*sqrt(dt).^(2);    %ï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½ï¿½ï¿½
+DD(:, 3) = CC(3, 1)*sqrt(dt).^(-2) + CC(3, 2)*sqrt(dt).^(-1) + CC(3, 3)*sqrt(dt).^(0) + CC(3, 4)*sqrt(dt).^(1) + CC(3, 5)*sqrt(dt).^(2);    %ï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½ï¿½ï¿½
 
-loglog(dt, DD);   %»­Ë«¶ÔÊý×ø±êÍ¼
+% loglog(dt, DD);   %ï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼

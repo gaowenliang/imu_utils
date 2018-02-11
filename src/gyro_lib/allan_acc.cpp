@@ -31,9 +31,9 @@ imu::AllanAcc::pushDegreePerSec( double data, double time )
 }
 
 void
-imu::AllanAcc::push( double data, double time )
+imu::AllanAcc::pushMPerSec2( double data, double time )
 {
-    m_rawData.push_back( AccData( data * 3600, time ) );
+    m_rawData.push_back( AccData( data, time ) );
     numData++;
 }
 
