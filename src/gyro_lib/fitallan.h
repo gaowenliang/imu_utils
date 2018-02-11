@@ -22,11 +22,11 @@ class FitAllan
         T calcSigma2( T _Q, T _N, T _B, T _K, T _R, T _tau ) const
         {
             // clang-format off
-            return  _Q / ( _tau * _tau )
-                  + _N / _tau
-                  + _B
-                  + _K * _tau
-                  + _R * _tau * _tau;
+            return  _Q * _Q / ( _tau * _tau )
+                  + _N * _N / _tau
+                  + _B * _B
+                  + _K * _K * _tau
+                  + _R * _R * _tau * _tau;
             // clang-format on
         }
 
@@ -40,13 +40,8 @@ class FitAllan
             T _R   = T( _paramt[4] );
             T _tau = T( tau );
 
-            //            T _sigma2 = calcSigma2( _Q, _N, _B, _K, _R, _tau );
-            //            T _sigma2 = _Q / ( _tau * _tau ) + _N / _tau + _B + _K * _tau + _R *
-            //            _tau * _tau;
-            T _sigma2 = _B * _B + _K * _K * _tau + _R * _R * _tau * _tau
-                        + _Q * _Q / ( _tau * _tau ) + _N * _N / _tau;
-
-            T _dsigma2   = _sigma2 - T( sigma2 );
+            T _sigma2    = calcSigma2( _Q, _N, _B, _K, _R, _tau );
+            T _dsigma2   = T( log( _sigma2 ) ) - T( log( sigma2 ) );
             residuals[0] = _dsigma2;
             //            std::cout << "_err " << T( sigma2 ) << " " << _sigma2 << std::endl;
 
@@ -59,47 +54,23 @@ class FitAllan
 
     public:
     FitAllan( std::vector< double > sigma2s, std::vector< double > taus );
-    std::vector< double > initValue( std::vector< double > sigma2s, std::vector< double > taus )
+    std::vector< double > initValue( std::vector< double > sigma2s, std::vector< double > taus );
+    std::vector< double > calcSimDeviation( std::vector< double > taus )
     {
-        if ( sigma2s.size( ) != taus.size( ) )
-            std::cout << " Error with data size!!!" << std::endl;
-
-        Eigen::MatrixXd Y( sigma2s.size( ), 1 );
-
-        for ( int index = 0; index < sigma2s.size( ); ++index )
-        {
-            Y( index, 0 ) = sigma2s[index];
-        }
-
-        int m = 2;
-
-        Eigen::MatrixXd B( 2 * m + 1, 1 );
-        B.setZero( );
-
-        Eigen::MatrixXd F( taus.size( ), 2 * m + 1 );
-        F.setZero( );
-
-        for ( int index = 0; index < taus.size( ); ++index )
-            for ( int order_index = 0; order_index < 2 * m + 1; ++order_index )
-            {
-                int kk = order_index - m;
-                F( index, order_index ) = pow( taus[index], kk );
-            }
-        //        std::cout << "F " << F << std::endl;
-
-        Eigen::MatrixXd A = F.transpose( ) * F;
-        B                 = F.transpose( ) * Y;
-        //        std::cout << "B " << B << std::endl;
-        //        std::cout << "A " << A << std::endl;
-
-        Eigen::MatrixXd C = A.inverse( ) * B;
-
-        std::vector< double > init;
-        for ( int index = 0; index < 2 * m + 1; ++index )
-            init.push_back( C( index, 0 ) );
-
-        std::cout << "C " << C << std::endl;
-        return init;
+        std::vector< double > des;
+        for ( auto& tau : taus )
+            des.push_back( sqrt( calcSigma2( Q, N, B, K, R, tau ) ) );
+        return des;
+    }
+    double calcSigma2( double _Q, double _N, double _B, double _K, double _R, double _tau ) const
+    {
+        // clang-format off
+        return  _Q * _Q / ( _tau * _tau )
+              + _N * _N / _tau
+              + _B * _B
+              + _K * _K * _tau
+              + _R * _R * _tau * _tau;
+        // clang-format on
     }
     /**
      * @brief getQ

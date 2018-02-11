@@ -23,6 +23,7 @@ class Allan
     std::vector< double > getDeviation( );
     std::vector< double > getTimes( );
     std::vector< int > getFactors( ) const;
+    double getAvgValue( );
 
     private:
     std::vector< double > calcVariance( double period );

@@ -1,8 +1,8 @@
 <launch>
 
     <node pkg="imu_utils" type="gyro_test" name="gyro_test" output="screen">
-        <param name="imu_topic" type="string" value= "/imu/imu"/>
-        <param name="imu_name" type="string" value= "gx4"/>
+        <param name="imu_topic" type="string" value= "/djiros/imu"/>
+        <param name="imu_name" type="string" value= "N3"/>
         <param name="data_save_path" type="string" value= "/home/gao/ws/src/imu_utils/data/"/>
         <param name="max_time_min" type="int" value= "120"/>
         <param name="max_cluster" type="int" value= "100"/>

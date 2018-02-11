@@ -246,3 +246,16 @@ imu::Allan::getAvgDt( )
     }
     return sum_dt / ( numData - 1 );
 }
+
+double
+imu::Allan::getAvgValue( )
+{
+    double sum = 0.0;
+    int num    = 0;
+    for ( auto& gyro : m_rawData )
+    {
+        sum += gyro.w;
+        ++num;
+    }
+    return sum / num;
+}
