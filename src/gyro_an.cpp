@@ -149,107 +149,111 @@ main( int argc, char** argv )
         ros::spinOnce( );
     }
 
-    gyro_x->calc( );
-    std::vector< double > gyro_v_x  = gyro_x->getVariance( );
-    std::vector< double > gyro_d_x  = gyro_x->getDeviation( );
-    std::vector< double > gyro_ts_x = gyro_x->getTimes( );
+    ///
+    {
+        gyro_x->calc( );
+        std::vector< double > gyro_v_x  = gyro_x->getVariance( );
+        std::vector< double > gyro_d_x  = gyro_x->getDeviation( );
+        std::vector< double > gyro_ts_x = gyro_x->getTimes( );
 
-    gyro_y->calc( );
-    std::vector< double > gyro_v_y  = gyro_y->getVariance( );
-    std::vector< double > gyro_d_y  = gyro_y->getDeviation( );
-    std::vector< double > gyro_ts_y = gyro_y->getTimes( );
+        gyro_y->calc( );
+        std::vector< double > gyro_v_y  = gyro_y->getVariance( );
+        std::vector< double > gyro_d_y  = gyro_y->getDeviation( );
+        std::vector< double > gyro_ts_y = gyro_y->getTimes( );
 
-    gyro_z->calc( );
-    std::vector< double > gyro_v_z  = gyro_z->getVariance( );
-    std::vector< double > gyro_d_z  = gyro_z->getDeviation( );
-    std::vector< double > gyro_ts_z = gyro_z->getTimes( );
+        gyro_z->calc( );
+        std::vector< double > gyro_v_z  = gyro_z->getVariance( );
+        std::vector< double > gyro_d_z  = gyro_z->getDeviation( );
+        std::vector< double > gyro_ts_z = gyro_z->getTimes( );
 
-    FitAllan fit_x( gyro_v_x, gyro_ts_x );
-    std::cout << "Gyro X " << std::endl;
-    std::cout << "     Q " << fit_x.getQ( ) << std::endl;
-    std::cout << "     N " << fit_x.getN( ) << std::endl;
-    std::cout << "     B " << fit_x.getB( ) << std::endl;
-    std::cout << "     K " << fit_x.getK( ) << std::endl;
-    std::cout << "     R " << fit_x.getR( ) << std::endl;
-    std::cout << "  bias " << gyro_x->getAvgValue( ) / 3600 << " degree/s" << std::endl;
-    std::cout << "-------------------" << std::endl;
+        std::cout << "Gyro X " << std::endl;
+        FitAllan fit_x( gyro_v_x, gyro_ts_x );
+        std::cout << "     Q " << fit_x.getQ( ) << std::endl;
+        std::cout << "     N " << fit_x.getN( ) << std::endl;
+        std::cout << "     B " << fit_x.getB( ) << std::endl;
+        std::cout << "     K " << fit_x.getK( ) << std::endl;
+        std::cout << "     R " << fit_x.getR( ) << std::endl;
+        std::cout << "  bias " << gyro_x->getAvgValue( ) / 3600 << " degree/s" << std::endl;
+        std::cout << "-------------------" << std::endl;
 
-    FitAllan fit_y( gyro_v_y, gyro_ts_y );
-    std::cout << "Gyro y " << std::endl;
-    std::cout << "     Q " << fit_y.getQ( ) << std::endl;
-    std::cout << "     N " << fit_y.getN( ) << std::endl;
-    std::cout << "     B " << fit_y.getB( ) << std::endl;
-    std::cout << "     K " << fit_y.getK( ) << std::endl;
-    std::cout << "     R " << fit_y.getR( ) << std::endl;
-    std::cout << "  bias " << gyro_y->getAvgValue( ) / 3600 << " degree/s" << std::endl;
-    std::cout << "-------------------" << std::endl;
+        std::cout << "Gyro y " << std::endl;
+        FitAllan fit_y( gyro_v_y, gyro_ts_y );
+        std::cout << "     Q " << fit_y.getQ( ) << std::endl;
+        std::cout << "     N " << fit_y.getN( ) << std::endl;
+        std::cout << "     B " << fit_y.getB( ) << std::endl;
+        std::cout << "     K " << fit_y.getK( ) << std::endl;
+        std::cout << "     R " << fit_y.getR( ) << std::endl;
+        std::cout << "  bias " << gyro_y->getAvgValue( ) / 3600 << " degree/s" << std::endl;
+        std::cout << "-------------------" << std::endl;
 
-    FitAllan fit_z( gyro_v_z, gyro_ts_z );
-    std::cout << "Gyro z " << std::endl;
-    std::cout << "     Q " << fit_z.getQ( ) << std::endl;
-    std::cout << "     N " << fit_z.getN( ) << std::endl;
-    std::cout << "     B " << fit_z.getB( ) << std::endl;
-    std::cout << "     K " << fit_z.getK( ) << std::endl;
-    std::cout << "     R " << fit_z.getR( ) << std::endl;
-    std::cout << "  bias " << gyro_z->getAvgValue( ) / 3600 << " degree/s" << std::endl;
-    std::cout << "-------------------" << std::endl;
+        std::cout << "Gyro z " << std::endl;
+        FitAllan fit_z( gyro_v_z, gyro_ts_z );
+        std::cout << "     Q " << fit_z.getQ( ) << std::endl;
+        std::cout << "     N " << fit_z.getN( ) << std::endl;
+        std::cout << "     B " << fit_z.getB( ) << std::endl;
+        std::cout << "     K " << fit_z.getK( ) << std::endl;
+        std::cout << "     R " << fit_z.getR( ) << std::endl;
+        std::cout << "  bias " << gyro_z->getAvgValue( ) / 3600 << " degree/s" << std::endl;
+        std::cout << "-------------------" << std::endl;
 
-    std::vector< double > gyro_sim_d_x = fit_x.calcSimDeviation( gyro_ts_x );
-    std::vector< double > gyro_sim_d_y = fit_y.calcSimDeviation( gyro_ts_y );
-    std::vector< double > gyro_sim_d_z = fit_z.calcSimDeviation( gyro_ts_z );
+        std::vector< double > gyro_sim_d_x = fit_x.calcSimDeviation( gyro_ts_x );
+        std::vector< double > gyro_sim_d_y = fit_y.calcSimDeviation( gyro_ts_y );
+        std::vector< double > gyro_sim_d_z = fit_z.calcSimDeviation( gyro_ts_z );
 
-    writeData3( IMU_NAME + "_sim", gyro_ts_x, gyro_sim_d_x, gyro_sim_d_y, gyro_sim_d_z );
-    writeData3( IMU_NAME, gyro_ts_x, gyro_d_x, gyro_d_y, gyro_d_z );
-
+        writeData3( IMU_NAME + "_sim_gyr", gyro_ts_x, gyro_sim_d_x, gyro_sim_d_y, gyro_sim_d_z );
+        writeData3( IMU_NAME + "_gyr", gyro_ts_x, gyro_d_x, gyro_d_y, gyro_d_z );
+    }
     std::cout << "==============================================" << std::endl;
     std::cout << "==============================================" << std::endl;
 
-    acc_x->calc( );
-    std::vector< double > acc_v_x  = acc_x->getVariance( );
-    std::vector< double > acc_d_x  = acc_x->getDeviation( );
-    std::vector< double > acc_ts_x = acc_x->getTimes( );
+    {
+        acc_x->calc( );
+        std::vector< double > acc_v_x  = acc_x->getVariance( );
+        std::vector< double > acc_d_x  = acc_x->getDeviation( );
+        std::vector< double > acc_ts_x = acc_x->getTimes( );
 
-    acc_y->calc( );
-    std::vector< double > acc_v_y  = acc_y->getVariance( );
-    std::vector< double > acc_d_y  = acc_y->getDeviation( );
-    std::vector< double > acc_ts_y = acc_y->getTimes( );
+        acc_y->calc( );
+        std::vector< double > acc_v_y  = acc_y->getVariance( );
+        std::vector< double > acc_d_y  = acc_y->getDeviation( );
+        std::vector< double > acc_ts_y = acc_y->getTimes( );
 
-    acc_z->calc( );
-    std::vector< double > acc_v_z  = acc_z->getVariance( );
-    std::vector< double > acc_d_z  = acc_z->getDeviation( );
-    std::vector< double > acc_ts_z = acc_z->getTimes( );
+        acc_z->calc( );
+        std::vector< double > acc_v_z  = acc_z->getVariance( );
+        std::vector< double > acc_d_z  = acc_z->getDeviation( );
+        std::vector< double > acc_ts_z = acc_z->getTimes( );
 
-    FitAllan fit_x_acc( acc_v_x, acc_ts_x );
-    std::cout << "acc X " << std::endl;
-    std::cout << "     Q " << fit_x_acc.getQ( ) << std::endl;
-    std::cout << "     N " << fit_x_acc.getN( ) << std::endl;
-    std::cout << "     B " << fit_x_acc.getB( ) << std::endl;
-    std::cout << "     K " << fit_x_acc.getK( ) << std::endl;
-    std::cout << "     R " << fit_x_acc.getR( ) << std::endl;
-    std::cout << "-------------------" << std::endl;
+        std::cout << "acc X " << std::endl;
+        FitAllan fit_x_acc( acc_v_x, acc_ts_x );
+        std::cout << "     Q " << fit_x_acc.getQ( ) << std::endl;
+        std::cout << "     N " << fit_x_acc.getN( ) << std::endl;
+        std::cout << "     B " << fit_x_acc.getB( ) << std::endl;
+        std::cout << "     K " << fit_x_acc.getK( ) << std::endl;
+        std::cout << "     R " << fit_x_acc.getR( ) << std::endl;
+        std::cout << "-------------------" << std::endl;
 
-    FitAllan fit_y_acc( acc_v_y, acc_ts_y );
-    std::cout << "acc y " << std::endl;
-    std::cout << "     Q " << fit_y_acc.getQ( ) << std::endl;
-    std::cout << "     N " << fit_y_acc.getN( ) << std::endl;
-    std::cout << "     B " << fit_y_acc.getB( ) << std::endl;
-    std::cout << "     K " << fit_y_acc.getK( ) << std::endl;
-    std::cout << "     R " << fit_y_acc.getR( ) << std::endl;
-    std::cout << "-------------------" << std::endl;
+        std::cout << "acc y " << std::endl;
+        FitAllan fit_y_acc( acc_v_y, acc_ts_y );
+        std::cout << "     Q " << fit_y_acc.getQ( ) << std::endl;
+        std::cout << "     N " << fit_y_acc.getN( ) << std::endl;
+        std::cout << "     B " << fit_y_acc.getB( ) << std::endl;
+        std::cout << "     K " << fit_y_acc.getK( ) << std::endl;
+        std::cout << "     R " << fit_y_acc.getR( ) << std::endl;
+        std::cout << "-------------------" << std::endl;
 
-    FitAllan fit_z_acc( acc_v_z, acc_ts_z );
-    std::cout << "acc z " << std::endl;
-    std::cout << "     Q " << fit_z_acc.getQ( ) << std::endl;
-    std::cout << "     N " << fit_z_acc.getN( ) << std::endl;
-    std::cout << "     B " << fit_z_acc.getB( ) << std::endl;
-    std::cout << "     K " << fit_z_acc.getK( ) << std::endl;
-    std::cout << "     R " << fit_z_acc.getR( ) << std::endl;
-    std::cout << "-------------------" << std::endl;
-    std::vector< double > acc_sim_d_x = fit_x_acc.calcSimDeviation( acc_ts_x );
-    std::vector< double > acc_sim_d_y = fit_x_acc.calcSimDeviation( acc_ts_x );
-    std::vector< double > acc_sim_d_z = fit_x_acc.calcSimDeviation( acc_ts_x );
-    writeData3( IMU_NAME + "_sim_acc", acc_ts_x, acc_sim_d_x, acc_sim_d_y, acc_sim_d_z );
-    writeData3( IMU_NAME + "_acc", acc_ts_x, acc_d_x, acc_d_y, acc_d_z );
+        std::cout << "acc z " << std::endl;
+        FitAllan fit_z_acc( acc_v_z, acc_ts_z );
+        std::cout << "     Q " << fit_z_acc.getQ( ) << std::endl;
+        std::cout << "     N " << fit_z_acc.getN( ) << std::endl;
+        std::cout << "     B " << fit_z_acc.getB( ) << std::endl;
+        std::cout << "     K " << fit_z_acc.getK( ) << std::endl;
+        std::cout << "     R " << fit_z_acc.getR( ) << std::endl;
+        std::cout << "-------------------" << std::endl;
+        std::vector< double > acc_sim_d_x = fit_x_acc.calcSimDeviation( acc_ts_x );
+        std::vector< double > acc_sim_d_y = fit_y_acc.calcSimDeviation( acc_ts_x );
+        std::vector< double > acc_sim_d_z = fit_z_acc.calcSimDeviation( acc_ts_x );
+        writeData3( IMU_NAME + "_sim_acc", acc_ts_x, acc_sim_d_x, acc_sim_d_y, acc_sim_d_z );
+        writeData3( IMU_NAME + "_acc", acc_ts_x, acc_d_x, acc_d_y, acc_d_z );
+    }
 
     return 0;
 }

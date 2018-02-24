@@ -45,13 +45,16 @@ FitAllan::FitAllan( std::vector< double > sigma2s, std::vector< double > taus )
     K = param[3];
     R = param[4];
 
-    std::cout << "Q " << Q //
-              << " " << N  //
-              << " " << B  //
-              << " " << K  //
-              << " " << R << std::endl;
+    // std::cout << "Q " << Q //
+    //           << " " << N  //
+    //           << " " << B  //
+    //           << " " << K  //
+    //           << " " << R << std::endl;
 
-    std::cout << " noise " << sqrt( calcSigma2( Q, N, B, K, R, 1 ) ) / 3600.0 << std::endl;
+    std::cout << " Bias Instability " << sqrt( findMinNum( sigma2s ) ) / ( 57.3 * 3600 )
+              << " rad/s" << std::endl;
+    std::cout << " White Noise " << sqrt( calcSigma2( Q, N, B, K, R, 1 ) ) / ( 57.3 * 3600 )
+              << " rad/s" << std::endl;
 }
 
 std::vector< double >

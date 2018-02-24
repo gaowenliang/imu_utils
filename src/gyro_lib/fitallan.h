@@ -62,6 +62,13 @@ class FitAllan
             des.push_back( sqrt( calcSigma2( Q, N, B, K, R, tau ) ) );
         return des;
     }
+    double findMinNum( std::vector< double > num )
+    {
+        double min = 1000.0;
+        for ( unsigned int index = 0; index < num.size( ); ++index )
+            min = min < num[index] ? min : num[index];
+        return min;
+    }
     double calcSigma2( double _Q, double _N, double _B, double _K, double _R, double _tau ) const
     {
         // clang-format off
