@@ -51,10 +51,13 @@ FitAllan::FitAllan( std::vector< double > sigma2s, std::vector< double > taus )
     //           << " " << K  //
     //           << " " << R << std::endl;
 
-    std::cout << " Bias Instability " << sqrt( findMinNum( sigma2s ) ) / ( 57.3 * 3600 )
-              << " rad/s" << std::endl;
+    std::cout << " Bias Instability " << findMinNum( calcSimDeviation( taus ) ) / ( 57.3 * 3600 )
+              << " rad/s, at " << taus[findMinIndex( calcSimDeviation( taus ) )] << " s" << std::endl;
     std::cout << " White Noise " << sqrt( calcSigma2( Q, N, B, K, R, 1 ) ) / ( 57.3 * 3600 )
               << " rad/s" << std::endl;
+
+    std::cout << " Bias Instability " << findMinNum( calcSimDeviation( taus ) ) << " rad/s" << std::endl;
+    std::cout << " White Noise " << sqrt( calcSigma2( Q, N, B, K, R, 1 ) ) << " rad/s" << std::endl;
 }
 
 std::vector< double >
@@ -65,7 +68,7 @@ FitAllan::initValue( std::vector< double > sigma2s, std::vector< double > taus )
 
     Eigen::MatrixXd Y( sigma2s.size( ), 1 );
 
-    for ( int index = 0; index < sigma2s.size( ); ++index )
+    for ( unsigned int index = 0; index < sigma2s.size( ); ++index )
     {
         Y( index, 0 ) = sqrt( sigma2s[index] );
     }
@@ -79,7 +82,7 @@ FitAllan::initValue( std::vector< double > sigma2s, std::vector< double > taus )
     Eigen::MatrixXd F( taus.size( ), 2 * m_order + 1 );
     F.setZero( );
 
-    for ( int index = 0; index < taus.size( ); ++index )
+    for ( unsigned int index = 0; index < taus.size( ); ++index )
         for ( int order_index = 0; order_index < 2 * m_order + 1; ++order_index )
         {
             int kk = order_index - m_order;
