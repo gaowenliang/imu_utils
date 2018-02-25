@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#define M_PI_CON 3.141592653589
+
 namespace utils
 {
 template< class T >

@@ -1,7 +1,7 @@
 #ifndef ALLAN_H
 #define ALLAN_H
 
-#include "type.h"
+#include "../type.h"
 #include <iostream>
 #include <math.h>
 #include <vector>
@@ -9,11 +9,11 @@
 namespace imu
 {
 
-class Allan
+class AllanGyr
 {
     public:
-    Allan( std::string name, int maxCluster = 10000 );
-    ~Allan( );
+    AllanGyr( std::string name, int maxCluster = 10000 );
+    ~AllanGyr( );
     void pushRadPerSec( double data, double time );
     void pushDegreePerSec( double data, double time );
     void pushDegreePerHou( double data, double time );

@@ -1,6 +1,6 @@
-#include "allan.h"
+#include "allan_gyr.h"
 
-imu::Allan::Allan( std::string name, int maxCluster )
+imu::AllanGyr::AllanGyr( std::string name, int maxCluster )
 : m_name( name )
 , numData( 0 )
 , numCluster( maxCluster )
@@ -9,7 +9,7 @@ imu::Allan::Allan( std::string name, int maxCluster )
               << " num of Cluster " << numCluster << std::endl;
 }
 
-imu::Allan::~Allan( )
+imu::AllanGyr::~AllanGyr( )
 {
     m_rawData.clear( );
     m_thetas.clear( );
@@ -17,28 +17,28 @@ imu::Allan::~Allan( )
 }
 
 void
-imu::Allan::pushRadPerSec( double data, double time )
+imu::AllanGyr::pushRadPerSec( double data, double time )
 {
     m_rawData.push_back( GyrData( data * 57.3 * 3600, time ) );
     numData++;
 }
 
 void
-imu::Allan::pushDegreePerSec( double data, double time )
+imu::AllanGyr::pushDegreePerSec( double data, double time )
 {
     m_rawData.push_back( GyrData( data * 3600, time ) );
     numData++;
 }
 
 void
-imu::Allan::pushDegreePerHou( double data, double time )
+imu::AllanGyr::pushDegreePerHou( double data, double time )
 {
     m_rawData.push_back( GyrData( data, time ) );
     numData++;
 }
 
 void
-imu::Allan::calc( )
+imu::AllanGyr::calc( )
 {
     std::cout << m_name << " "
               << " numData " << numData << std::endl;
@@ -78,13 +78,13 @@ imu::Allan::calc( )
 }
 
 std::vector< double >
-imu::Allan::getVariance( ) const
+imu::AllanGyr::getVariance( ) const
 {
     return mVariance;
 }
 
 std::vector< double >
-imu::Allan::getDeviation( )
+imu::AllanGyr::getDeviation( )
 {
     double period = getAvgPeriod( );
 
@@ -99,7 +99,7 @@ imu::Allan::getDeviation( )
 }
 
 std::vector< double >
-imu::Allan::getTimes( )
+imu::AllanGyr::getTimes( )
 {
     double period = getAvgPeriod( );
     std::vector< double > time( numFactors, 0.0 );
@@ -113,13 +113,13 @@ imu::Allan::getTimes( )
 }
 
 std::vector< int >
-imu::Allan::getFactors( ) const
+imu::AllanGyr::getFactors( ) const
 {
     return mFactors;
 }
 
 std::vector< double >
-imu::Allan::calcVariance( double period )
+imu::AllanGyr::calcVariance( double period )
 {
     std::vector< double > sigma2( numFactors, 0.0 );
 
@@ -148,7 +148,7 @@ imu::Allan::calcVariance( double period )
 }
 
 std::vector< double >
-imu::Allan::calcThetas( const double freq )
+imu::AllanGyr::calcThetas( const double freq )
 {
     std::vector< double > thetas;
 
@@ -162,7 +162,7 @@ imu::Allan::calcThetas( const double freq )
 }
 
 void
-imu::Allan::initStrides( )
+imu::AllanGyr::initStrides( )
 {
 
     int mode               = numData / 2;
@@ -213,7 +213,7 @@ imu::Allan::initStrides( )
 }
 
 std::vector< double >
-imu::Allan::getLogSpace( float a, float b )
+imu::AllanGyr::getLogSpace( float a, float b )
 {
     std::vector< double > logSpace;
 
@@ -232,7 +232,7 @@ imu::Allan::getLogSpace( float a, float b )
 }
 
 double
-imu::Allan::getAvgDt( )
+imu::AllanGyr::getAvgDt( )
 {
     double sum_dt  = 0.0;
     double start_t = m_rawData[0].t;
@@ -248,7 +248,7 @@ imu::Allan::getAvgDt( )
 }
 
 double
-imu::Allan::getAvgValue( )
+imu::AllanGyr::getAvgValue( )
 {
     double sum = 0.0;
     int num    = 0;

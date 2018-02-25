@@ -1,13 +1,11 @@
-#ifndef FITALLAN_H
-#define FITALLAN_H
+#ifndef FitAllanAcc_H
+#define FitAllanAcc_H
 
 #include <ceres/ceres.h>
 #include <cmath>
 #include <eigen3/Eigen/Eigen>
 
-#define M_PI 3.141592653589
-
-class FitAllan
+class FitAllanAcc
 {
     class AllanSigmaError
     {
@@ -53,43 +51,47 @@ class FitAllan
     };
 
     public:
-    FitAllan( std::vector< double > sigma2s, std::vector< double > taus );
-    std::vector< double > initValue( std::vector< double > sigma2s, std::vector< double > taus );
-    std::vector< double > calcSimDeviation( std::vector< double > taus )
+    FitAllanAcc( std::vector< double > sigma2s, std::vector< double > taus );
+    std::vector< double > calcSimDeviation( std::vector< double > taus );
+    double getBiasInstability( ) { return findMinNum( calcSimDeviation( m_taus ) ); }
+    double getWhiteNoise( ) { return sqrt( calcSigma2( Q, N, B, K, R, 1 ) ); }
+
+    private:
+    std::vector< double > checkData( std::vector< double > sigma2s, std::vector< double > taus )
     {
-        std::vector< double > des;
-        for ( auto& tau : taus )
-            des.push_back( sqrt( calcSigma2( Q, N, B, K, R, tau ) ) );
-        return des;
-    }
-    double findMinNum( std::vector< double > num )
-    {
-        double min = 1000.0;
-        for ( unsigned int index = 0; index < num.size( ); ++index )
-            min = min < num[index] ? min : num[index];
-        return min;
-    }
-    int findMinIndex( std::vector< double > num )
-    {
-        double min    = 1000.0;
-        int min_index = 0;
-        for ( unsigned int index = 0; index < num.size( ); ++index )
+        std::vector< double > sigma2s_tmp;
+        double data_tmp = 0;
+        bool is_first   = true;
+        for ( unsigned int index = 0; index < sigma2s.size( ); ++index )
         {
-            min_index = min < num[index] ? min_index : index;
-            min       = min < num[index] ? min : num[index];
+            if ( taus[index] < 1 )
+            {
+                if ( data_tmp < sigma2s[index] )
+                {
+                    data_tmp = sigma2s[index];
+                    continue;
+                }
+                else
+                {
+                    sigma2s_tmp.push_back( sigma2s[index] );
+                    m_taus.push_back( taus[index] );
+                }
+            }
+            else
+            {
+                sigma2s_tmp.push_back( sigma2s[index] );
+                m_taus.push_back( taus[index] );
+            }
         }
-        return min_index;
+        return sigma2s_tmp;
     }
-    double calcSigma2( double _Q, double _N, double _B, double _K, double _R, double _tau ) const
-    {
-        // clang-format off
-        return  _Q * _Q / ( _tau * _tau )
-              + _N * _N / _tau
-              + _B * _B
-              + _K * _K * _tau
-              + _R * _R * _tau * _tau;
-        // clang-format on
-    }
+
+    std::vector< double > initValue( std::vector< double > sigma2s, std::vector< double > taus );
+    double findMinNum( std::vector< double > num );
+    int findMinIndex( std::vector< double > num );
+    double calcSigma2( double _Q, double _N, double _B, double _K, double _R, double _tau ) const;
+
+    public:
     /**
      * @brief getQ
      *          Quantization Noise
@@ -131,6 +133,9 @@ class FitAllan
     double B;
     double K;
     double R;
+
+    private:
+    std::vector< double > m_taus;
 };
 
-#endif // FITALLAN_H
+#endif // FitAllanAcc_H

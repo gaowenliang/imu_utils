@@ -41,31 +41,20 @@ Accelerometer "bias Instability" | `acc_w` | <img src="https://latex.codecogs.co
 * green : DJI-A3, `400Hz`
 * black : DJI-N3, `400Hz`
 
-DJI A3:
-`400Hz`
-
-<img src="figure/A3.png">
+DJI A3: `400Hz`
 
 Download link: [`百度网盘`](https://pan.baidu.com/s/1jJYg8R0 "DJI A3")
 
 
-DJI A3:
-`400Hz`
+DJI A3: `400Hz`
 
 Download link: [`百度网盘`](https://pan.baidu.com/s/1pLXGqx1 "DJI N3")
 
 
-ADIS16448: 
-`200Hz`
-
-<img src="figure/16448.png">
-
-
+ADIS16448: `200Hz`
+ 
 Download link:[`百度网盘`](https://pan.baidu.com/s/1dGd0mn3 "ADIS16448")
 
-3dM-GX4: 
-`500Hz`
-
-<img src="figure/gx4.png">
+3dM-GX4: `500Hz`
 
 Download link:[`百度网盘`](https://pan.baidu.com/s/1ggcan9D "GX4")

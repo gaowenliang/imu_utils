@@ -31,11 +31,19 @@ include_directories(
 
 catkin_package()
 
-add_executable(gyro_test
-    src/gyro_an.cpp
-    src/gyro_lib/allan.cpp
-    src/gyro_lib/allan_acc.cpp
-    src/gyro_lib/fitallan.cpp
+set(ACC_LIB_SOURCE_FILES
+    ${PROJECT_SOURCE_DIR}/src/acc_lib/allan_acc.cpp
+    ${PROJECT_SOURCE_DIR}/src/acc_lib/fitallan_acc.cpp
+    )
+set(GYR_LIB_SOURCE_FILES
+    ${PROJECT_SOURCE_DIR}/src/gyr_lib/allan_gyr.cpp
+    ${PROJECT_SOURCE_DIR}/src/gyr_lib/fitallan_gyr.cpp
     )
 
-target_link_libraries(gyro_test dw ${catkin_LIBRARIES} ${OpenCV_LIBS} ${CERES_LIBRARIES})
+add_executable(imu_an
+    src/imu_an.cpp
+    ${GYR_LIB_SOURCE_FILES}
+    ${ACC_LIB_SOURCE_FILES}
+    )
+
+target_link_libraries(imu_an dw ${catkin_LIBRARIES} ${OpenCV_LIBS} ${CERES_LIBRARIES})

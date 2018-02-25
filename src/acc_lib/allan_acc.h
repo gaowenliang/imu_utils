@@ -1,7 +1,7 @@
 #ifndef AllanAcc_H
 #define AllanAcc_H
 
-#include "type.h"
+#include "../type.h"
 #include <iostream>
 #include <math.h>
 #include <vector>

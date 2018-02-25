@@ -1,6 +1,6 @@
 <launch>
 
-    <node pkg="imu_utils" type="gyro_test" name="gyro_test" output="screen">
+    <node pkg="imu_utils" type="imu_an" name="imu_an" output="screen">
         <param name="imu_topic" type="string" value= "/imu0"/>
         <param name="imu_name" type="string" value= "16448"/>
         <param name="data_save_path" type="string" value= "/home/gao/ws/src/imu_utils/data/"/>

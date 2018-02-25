@@ -1,6 +1,6 @@
-#include "fitallan.h"
+#include "fitallan_acc.h"
 
-FitAllan::FitAllan( std::vector< double > sigma2s, std::vector< double > taus )
+FitAllanAcc::FitAllanAcc( std::vector< double > sigma2s, std::vector< double > taus )
 : Q( 0.0 )
 , N( 0.0 )
 , B( 0.0 )
@@ -10,9 +10,11 @@ FitAllan::FitAllan( std::vector< double > sigma2s, std::vector< double > taus )
     if ( sigma2s.size( ) != taus.size( ) )
         std::cerr << "Error of point size" << std::endl;
 
-    std::vector< double > init = initValue( sigma2s, taus );
+    std::vector< double > sigma2s_tmp = checkData( sigma2s, taus );
 
-    int num_samples = sigma2s.size( );
+    std::vector< double > init = initValue( sigma2s_tmp, m_taus );
+
+    int num_samples = sigma2s_tmp.size( );
     //    double param[]  = { Q, N, B, K, R };
     double param[] = { init[0], init[1], init[2], init[3], init[4] };
 
@@ -24,7 +26,7 @@ FitAllan::FitAllan( std::vector< double > sigma2s, std::vector< double > taus )
         //        std::cout << "sigma " << i << " " << taus[i] << " " << sigma2s[i] << std::endl;
 
         ceres::CostFunction* f = new ceres::AutoDiffCostFunction< AllanSigmaError, 1, 5 >(
-        new AllanSigmaError( sigma2s[i], taus[i] ) );
+        new AllanSigmaError( sigma2s_tmp[i], m_taus[i] ) );
 
         problem.AddResidualBlock( f, NULL /* squared loss */, param );
     }
@@ -51,20 +53,15 @@ FitAllan::FitAllan( std::vector< double > sigma2s, std::vector< double > taus )
     //           << " " << K  //
     //           << " " << R << std::endl;
 
-    std::cout << " Bias Instability " << findMinNum( calcSimDeviation( taus ) ) / ( 57.3 * 3600 )
-              << " rad/s, at " << taus[findMinIndex( calcSimDeviation( taus ) )] << " s" << std::endl;
-    std::cout << " White Noise " << sqrt( calcSigma2( Q, N, B, K, R, 1 ) ) / ( 57.3 * 3600 )
-              << " rad/s" << std::endl;
-
-    std::cout << " Bias Instability " << findMinNum( calcSimDeviation( taus ) ) << " rad/s" << std::endl;
-    std::cout << " White Noise " << sqrt( calcSigma2( Q, N, B, K, R, 1 ) ) << " rad/s" << std::endl;
+    std::cout << " Bias Instability " << getBiasInstability( ) << " m/s^2" << std::endl;
+    std::cout << " White Noise " << getWhiteNoise( ) << " m/s^2" << std::endl;
 }
 
 std::vector< double >
-FitAllan::initValue( std::vector< double > sigma2s, std::vector< double > taus )
+FitAllanAcc::initValue( std::vector< double > sigma2s, std::vector< double > taus )
 {
     if ( sigma2s.size( ) != taus.size( ) )
-        std::cout << " Error with data size!!!" << std::endl;
+        std::cout << " Error with data size!!! " << sigma2s.size( ) << " " << taus.size( ) << std::endl;
 
     Eigen::MatrixXd Y( sigma2s.size( ), 1 );
 
@@ -105,62 +102,105 @@ FitAllan::initValue( std::vector< double > sigma2s, std::vector< double > taus )
     return init;
 }
 
+std::vector< double >
+FitAllanAcc::calcSimDeviation( std::vector< double > taus )
+{
+    std::vector< double > des;
+    for ( auto& tau : taus )
+        des.push_back( sqrt( calcSigma2( Q, N, B, K, R, tau ) ) );
+    return des;
+}
+
 double
-FitAllan::getN( ) const
+FitAllanAcc::findMinNum( std::vector< double > num )
+{
+    double min = 1000.0;
+    for ( unsigned int index = 0; index < num.size( ); ++index )
+        min = min < num[index] ? min : num[index];
+    return min;
+}
+
+int
+FitAllanAcc::findMinIndex( std::vector< double > num )
+{
+    double min    = 1000.0;
+    int min_index = 0;
+    for ( unsigned int index = 0; index < num.size( ); ++index )
+    {
+        min_index = min < num[index] ? min_index : index;
+        min       = min < num[index] ? min : num[index];
+    }
+    return min_index;
+}
+
+double
+FitAllanAcc::calcSigma2( double _Q, double _N, double _B, double _K, double _R, double _tau ) const
+{
+    // clang-format off
+  return  _Q * _Q / ( _tau * _tau )
+      + _N * _N / _tau
+      + _B * _B
+      + _K * _K * _tau
+      + _R * _R * _tau * _tau;
+    // clang-format on
+}
+
+double
+FitAllanAcc::getN( ) const
 {
     return sqrt( N * N ) / 60.0;
 }
 
 double
-FitAllan::getB( ) const
+FitAllanAcc::getB( ) const
 {
     return sqrt( B * B ) / 0.6642824703;
 }
 
 double
-FitAllan::getK( ) const
+FitAllanAcc::getK( ) const
 {
     return 60.0 * sqrt( 3.0 * K * K );
 }
 
 double
-FitAllan::getR( ) const
+FitAllanAcc::getR( ) const
 {
     return 3600.0 * sqrt( 2.0 * R * R );
 }
 
 double
-FitAllan::getQ( ) const
+FitAllanAcc::getQ( ) const
 {
     return sqrt( Q * Q ) / ( 3600.0 * sqrt( 3.0 ) );
 }
 
 // double
-// FitAllan::getN( ) const
+// FitAllanAcc::getN( ) const
 //{
 //    return sqrt( N ) / 60.0;
 //}
 
 // double
-// FitAllan::getB( ) const
+// FitAllanAcc::getB( ) const
 //{
 //    return sqrt( B ) / 0.6642824703;
 //}
 
 // double
-// FitAllan::getK( ) const
+// FitAllanAcc::getK( ) const
 //{
 //    return 60.0 * sqrt( 3.0 * K );
 //}
 
 // double
-// FitAllan::getR( ) const
+// FitAllanAcc::getR( ) const
 //{
 //    return 3600.0 * sqrt( 2.0 * R );
 //}
 
 // double
-// FitAllan::getQ( ) const
+// FitAllanAcc::getQ( ) const
 //{
 //    return sqrt( Q ) / ( 3600.0 * sqrt( 3.0 ) );
 //}
