@@ -61,3 +61,17 @@ data_sim_draw=[data_sim_x data_sim_y data_sim_z] ;
 loglog(dt, data_draw , 'k+');
 xlabel('time:sec');                
 loglog(dt, data_sim_draw , 'k-');
+
+
+dt = dlmread('../data/data_xsens_acc_t.txt');         
+data_x = dlmread('../data/data_xsens_acc_x.txt'); 
+data_y = dlmread('../data/data_xsens_acc_y.txt'); 
+data_z = dlmread('../data/data_xsens_acc_z.txt'); 
+data_draw=[data_x data_y data_z];
+data_sim_x= dlmread('../data/data_xsens_sim_acc_x.txt'); 
+data_sim_y= dlmread('../data/data_xsens_sim_acc_y.txt'); 
+data_sim_z= dlmread('../data/data_xsens_sim_acc_z.txt'); 
+data_sim_draw=[data_sim_x data_sim_y data_sim_z];
+loglog(dt, data_draw , 'o');
+xlabel('time:sec');                
+loglog(dt, data_sim_draw , '-');

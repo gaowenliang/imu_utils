@@ -5,6 +5,9 @@
 #include <cmath>
 #include <eigen3/Eigen/Eigen>
 
+namespace imu
+{
+
 class FitAllanAcc
 {
     class AllanSigmaError
@@ -52,9 +55,9 @@ class FitAllanAcc
 
     public:
     FitAllanAcc( std::vector< double > sigma2s, std::vector< double > taus );
-    std::vector< double > calcSimDeviation( std::vector< double > taus );
-    double getBiasInstability( ) { return findMinNum( calcSimDeviation( m_taus ) ); }
-    double getWhiteNoise( ) { return sqrt( calcSigma2( Q, N, B, K, R, 1 ) ); }
+    std::vector< double > calcSimDeviation( const std::vector< double > taus ) const;
+    double getBiasInstability( ) const { return findMinNum( calcSimDeviation( m_taus ) ); }
+    double getWhiteNoise( ) const { return sqrt( calcSigma2( Q, N, B, K, R, 1 ) ); }
 
     private:
     std::vector< double > checkData( std::vector< double > sigma2s, std::vector< double > taus )
@@ -87,7 +90,7 @@ class FitAllanAcc
     }
 
     std::vector< double > initValue( std::vector< double > sigma2s, std::vector< double > taus );
-    double findMinNum( std::vector< double > num );
+    double findMinNum( const std::vector< double > num ) const;
     int findMinIndex( std::vector< double > num );
     double calcSigma2( double _Q, double _N, double _B, double _K, double _R, double _tau ) const;
 
@@ -137,5 +140,6 @@ class FitAllanAcc
     private:
     std::vector< double > m_taus;
 };
+}
 
 #endif // FitAllanAcc_H

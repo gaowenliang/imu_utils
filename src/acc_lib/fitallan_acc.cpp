@@ -1,5 +1,7 @@
 #include "fitallan_acc.h"
 
+using namespace imu;
+
 FitAllanAcc::FitAllanAcc( std::vector< double > sigma2s, std::vector< double > taus )
 : Q( 0.0 )
 , N( 0.0 )
@@ -103,7 +105,7 @@ FitAllanAcc::initValue( std::vector< double > sigma2s, std::vector< double > tau
 }
 
 std::vector< double >
-FitAllanAcc::calcSimDeviation( std::vector< double > taus )
+FitAllanAcc::calcSimDeviation( const std::vector< double > taus ) const
 {
     std::vector< double > des;
     for ( auto& tau : taus )
@@ -112,7 +114,7 @@ FitAllanAcc::calcSimDeviation( std::vector< double > taus )
 }
 
 double
-FitAllanAcc::findMinNum( std::vector< double > num )
+FitAllanAcc::findMinNum( const std::vector< double > num ) const
 {
     double min = 1000.0;
     for ( unsigned int index = 0; index < num.size( ); ++index )

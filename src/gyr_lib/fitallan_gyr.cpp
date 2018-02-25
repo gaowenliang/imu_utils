@@ -1,5 +1,7 @@
 #include "fitallan_gyr.h"
 
+using namespace imu;
+
 FitAllanGyr::FitAllanGyr( std::vector< double > sigma2s, std::vector< double > taus )
 : Q( 0.0 )
 , N( 0.0 )
@@ -104,7 +106,7 @@ FitAllanGyr::initValue( std::vector< double > sigma2s, std::vector< double > tau
 }
 
 std::vector< double >
-FitAllanGyr::calcSimDeviation( std::vector< double > taus )
+FitAllanGyr::calcSimDeviation( const std::vector< double > taus ) const
 {
     std::vector< double > des;
     for ( auto& tau : taus )
@@ -113,7 +115,7 @@ FitAllanGyr::calcSimDeviation( std::vector< double > taus )
 }
 
 double
-FitAllanGyr::findMinNum( std::vector< double > num )
+FitAllanGyr::findMinNum( const std::vector< double > num ) const
 {
     double min = 1000.0;
     for ( unsigned int index = 0; index < num.size( ); ++index )

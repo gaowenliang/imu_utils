@@ -5,6 +5,9 @@
 #include <cmath>
 #include <eigen3/Eigen/Eigen>
 
+namespace imu
+{
+
 class FitAllanGyr
 {
     class AllanSigmaError
@@ -52,16 +55,19 @@ class FitAllanGyr
 
     public:
     FitAllanGyr( std::vector< double > sigma2s, std::vector< double > taus );
-    std::vector< double > calcSimDeviation( std::vector< double > taus );
-    double getBiasInstability( )
+    std::vector< double > calcSimDeviation( const std::vector< double > taus ) const;
+    double getBiasInstability( ) const
     {
         return findMinNum( calcSimDeviation( m_taus ) ) / ( 57.3 * 3600 );
     }
-    double getWhiteNoise( ) { return sqrt( calcSigma2( Q, N, B, K, R, 1 ) ) / ( 57.3 * 3600 ); }
+    double getWhiteNoise( ) const
+    {
+        return sqrt( calcSigma2( Q, N, B, K, R, 1 ) ) / ( 57.3 * 3600 );
+    }
 
     private:
     std::vector< double > initValue( std::vector< double > sigma2s, std::vector< double > taus );
-    double findMinNum( std::vector< double > num );
+    double findMinNum( const std::vector< double > num ) const;
     int findMinIndex( std::vector< double > num );
     double calcSigma2( double _Q, double _N, double _B, double _K, double _R, double _tau ) const;
 
@@ -111,5 +117,5 @@ class FitAllanGyr
     private:
     std::vector< double > m_taus;
 };
-
+}
 #endif // FitAllanGyr_H

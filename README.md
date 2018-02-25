@@ -7,11 +7,12 @@ Actually, just analyze the Allan Variance for the IMU data. Collect the data whi
 
 ## refrence
 
-Refrence technical report: [`Allan Variance: Noise Analysis for Gyroscopes`](http://cache.freescale.com/files/sensors/doc/app_note/AN5087.pdf "Allan Variance: Noise Analysis for Gyroscopes"), [`vectornav gyroscope`](https://www.vectornav.com/support/library/gyroscope "vectornav gyroscope"), 
+Refrence technical report: [`Allan Variance: Noise Analysis for Gyroscopes`](http://cache.freescale.com/files/sensors/doc/app_note/AN5087.pdf "Allan Variance: Noise Analysis for Gyroscopes"), [`vectornav gyroscope`](https://www.vectornav.com/support/library/gyroscope "vectornav gyroscope") and 
 [`An introduction to inertial navigation`](http://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-696.html "An introduction to inertial navigation")
 
 ```
-Woodman, O.J., 2007. An introduction to inertial navigation (No. UCAM-CL-TR-696). University of Cambridge, Computer Laboratory.
+Woodman, O.J., 2007. An introduction to inertial navigation (No. UCAM-CL-TR-696).
+University of Cambridge, Computer Laboratory.
 ```
 
 Refrence Matlab code: [`GyroAllan`](https://github.com/XinLiGitHub/GyroAllan "GyroAllan")
@@ -40,6 +41,44 @@ Accelerometer "bias Instability" | `acc_w` | <img src="https://latex.codecogs.co
 * red   : 3dm-Gx4, `500Hz`
 * green : DJI-A3, `400Hz`
 * black : DJI-N3, `400Hz`
+* circle : xsens-MTI-100, `100Hz`
+
+sample output:
+
+```
+type: IMU
+name: A3
+Gyr:
+   unit: " rad/s"
+   avg-axis:
+      gyr_n: 1.0351286977809465e-04
+      gyr_w: 2.9438676109223402e-05
+   x-axis:
+      gyr_n: 1.0312669892959053e-04
+      gyr_w: 3.3765827874234673e-05
+   y-axis:
+      gyr_n: 1.0787155789128671e-04
+      gyr_w: 3.1970693666470835e-05
+   z-axis:
+      gyr_n: 9.9540352513406743e-05
+      gyr_w: 2.2579506786964707e-05
+Acc:
+   unit: " m/s^2"
+   avg-axis:
+      acc_n: 1.3985049290745563e-03
+      acc_w: 6.3249251509920116e-04
+   x-axis:
+      acc_n: 1.1687799474421937e-03
+      acc_w: 5.3044554054317266e-04
+   y-axis:
+      acc_n: 1.2050535351630543e-03
+      acc_w: 6.0281218607825414e-04
+   z-axis:
+      acc_n: 1.8216813046184213e-03
+      acc_w: 7.6421981867617645e-04
+```
+
+## dataset
 
 DJI A3: `400Hz`
 
@@ -58,3 +97,7 @@ Download link:[`百度网盘`](https://pan.baidu.com/s/1dGd0mn3 "ADIS16448")
 3dM-GX4: `500Hz`
 
 Download link:[`百度网盘`](https://pan.baidu.com/s/1ggcan9D "GX4")
+
+xsens-MTI-100: `100Hz`
+
+Download link:[`百度网盘`](https://pan.baidu.com/s/1i64xkgP "MTI-100")
