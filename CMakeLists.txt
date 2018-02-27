@@ -46,4 +46,4 @@ add_executable(imu_an
     ${ACC_LIB_SOURCE_FILES}
     )
 
-target_link_libraries(imu_an dw ${catkin_LIBRARIES} ${OpenCV_LIBS} ${CERES_LIBRARIES})
+target_link_libraries(imu_an ${catkin_LIBRARIES} ${OpenCV_LIBS} ${CERES_LIBRARIES})

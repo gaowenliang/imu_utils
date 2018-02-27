@@ -1,9 +1,9 @@
-#define BACKWARD_HAS_DW 1
-#include "backward.hpp"
-namespace backward
-{
-backward::SignalHandling sh;
-}
+//#define BACKWARD_HAS_DW 1
+//#include "backward.hpp"
+// namespace backward
+//{
+// backward::SignalHandling sh;
+//}
 
 #include "acc_lib/allan_acc.h"
 #include "acc_lib/fitallan_acc.h"
