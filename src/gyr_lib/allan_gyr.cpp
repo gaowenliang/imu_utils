@@ -132,7 +132,8 @@ imu::AllanGyr::calcVariance( double period )
 
         for ( int k = 0; k < max; k++ )
         {
-            double temp = ( m_thetas[k + 2 * factor] - 2 * m_thetas[k + factor] + m_thetas[k] );
+            double temp
+            = ( m_thetas[k + 2 * factor] - 2 * m_thetas[k + factor] + m_thetas[k] );
             sigma2[i] += ( temp * temp );
         }
 
@@ -178,6 +179,8 @@ imu::AllanGyr::initStrides( )
     //              << " mode: " << mode << std::endl;
     //    std::cout << m_name << " "
     //              << " shft: " << shft << std::endl;
+    //    std::cout << m_name << " "
+    //              << " maxStride: " << maxStride << std::endl;
 
     std::vector< double > avgFactors = getLogSpace( 0, log10( maxStride ) );
     //    std::cout << m_name << " "
