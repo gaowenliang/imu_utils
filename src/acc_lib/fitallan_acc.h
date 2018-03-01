@@ -20,6 +20,12 @@ class FitAllanAcc
         }
 
         template< typename T >
+        T calcLog10( T src ) const
+        {
+            return ( log( src ) ) / ( log( 10 ) );
+        }
+
+        template< typename T >
         T calcSigma2( T _Q, T _N, T _B, T _K, T _R, T _tau ) const
         {
             // clang-format off
@@ -42,9 +48,10 @@ class FitAllanAcc
             T _tau = T( tau );
 
             T _sigma2    = calcSigma2( _Q, _N, _B, _K, _R, _tau );
-            T _dsigma2   = T( log( _sigma2 ) ) - T( log( sigma2 ) );
+            T _dsigma2   = T( calcLog10( _sigma2 ) ) - T( calcLog10( sigma2 ) );
             residuals[0] = _dsigma2;
-            //            std::cout << "_err " << T( sigma2 ) << " " << _sigma2 << std::endl;
+            //            std::cout << "_err " << T( sigma2 ) << " " << _sigma2
+            //            << std::endl;
 
             return true;
         }
@@ -56,8 +63,14 @@ class FitAllanAcc
     public:
     FitAllanAcc( std::vector< double > sigma2s, std::vector< double > taus );
     std::vector< double > calcSimDeviation( const std::vector< double > taus ) const;
-    double getBiasInstability( ) const { return findMinNum( calcSimDeviation( m_taus ) ); }
-    double getWhiteNoise( ) const { return sqrt( calcSigma2( Q, N, B, K, R, 1 ) ); }
+    double getBiasInstability( ) const
+    {
+        return findMinNum( calcSimDeviation( m_taus ) );
+    }
+    double getWhiteNoise( ) const
+    {
+        return sqrt( calcSigma2( Q, N, B, K, R, 1 ) );
+    }
 
     private:
     std::vector< double > checkData( std::vector< double > sigma2s, std::vector< double > taus )
@@ -89,7 +102,8 @@ class FitAllanAcc
         return sigma2s_tmp;
     }
 
-    std::vector< double > initValue( std::vector< double > sigma2s, std::vector< double > taus );
+    std::vector< double >
+    initValue( std::vector< double > sigma2s, std::vector< double > taus );
     double findMinNum( const std::vector< double > num ) const;
     int findMinIndex( std::vector< double > num );
     double calcSigma2( double _Q, double _N, double _B, double _K, double _R, double _tau ) const;
