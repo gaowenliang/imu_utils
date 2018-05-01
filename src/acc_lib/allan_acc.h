@@ -23,6 +23,7 @@ class AllanAcc
     std::vector< double > getDeviation( );
     std::vector< double > getTimes( );
     std::vector< int > getFactors( ) const;
+    double getFreq( ) const;
 
     private:
     std::vector< double > calcVariance( double period );
@@ -36,6 +37,7 @@ class AllanAcc
     int getFactorsNum( ) { return numFactors; }
 
     std::string m_name;
+    double m_freq;
     int numData;
     std::vector< AccData > m_rawData;
     std::vector< double > m_thetas;

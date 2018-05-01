@@ -62,15 +62,15 @@ imu::AllanAcc::calc( )
         std::cout << m_name << " "
                   << " Too short time!!!!" << std::endl;
 
-    double freq = getAvgFreq( );
+    m_freq = getAvgFreq( );
     std::cout << m_name << " "
-              << " freq " << freq << std::endl;
+              << " freq " << m_freq << std::endl;
 
     double period = getAvgPeriod( );
     std::cout << m_name << " "
               << " period " << period << std::endl;
 
-    m_thetas = calcThetas( freq );
+    m_thetas = calcThetas( m_freq );
 
     initStrides( );
 
@@ -116,6 +116,12 @@ std::vector< int >
 imu::AllanAcc::getFactors( ) const
 {
     return mFactors;
+}
+
+double
+imu::AllanAcc::getFreq( ) const
+{
+    return m_freq;
 }
 
 std::vector< double >

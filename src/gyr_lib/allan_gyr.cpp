@@ -62,15 +62,15 @@ imu::AllanGyr::calc( )
         std::cout << m_name << " "
                   << " Too short time!!!!" << std::endl;
 
-    double freq = getAvgFreq( );
+    m_freq = getAvgFreq( );
     std::cout << m_name << " "
-              << " freq " << freq << std::endl;
+              << " freq " << m_freq << std::endl;
 
     double period = getAvgPeriod( );
     std::cout << m_name << " "
               << " period " << period << std::endl;
 
-    m_thetas = calcThetas( freq );
+    m_thetas = calcThetas( m_freq );
 
     initStrides( );
 
@@ -132,8 +132,7 @@ imu::AllanGyr::calcVariance( double period )
 
         for ( int k = 0; k < max; k++ )
         {
-            double temp
-            = ( m_thetas[k + 2 * factor] - 2 * m_thetas[k + factor] + m_thetas[k] );
+            double temp = ( m_thetas[k + 2 * factor] - 2 * m_thetas[k + factor] + m_thetas[k] );
             sigma2[i] += ( temp * temp );
         }
 
@@ -261,4 +260,10 @@ imu::AllanGyr::getAvgValue( )
         ++num;
     }
     return sum / num;
+}
+
+double
+imu::AllanGyr::getFreq( ) const
+{
+    return m_freq;
 }

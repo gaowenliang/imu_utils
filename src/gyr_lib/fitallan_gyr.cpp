@@ -2,12 +2,13 @@
 
 using namespace imu;
 
-FitAllanGyr::FitAllanGyr( std::vector< double > sigma2s, std::vector< double > taus )
+FitAllanGyr::FitAllanGyr( std::vector< double > sigma2s, std::vector< double > taus, double _freq )
 : Q( 0.0 )
 , N( 0.0 )
 , B( 0.0 )
 , K( 0.0 )
 , R( 0.0 )
+, freq( _freq )
 {
     if ( sigma2s.size( ) != taus.size( ) )
         std::cerr << "Error of point size" << std::endl;
@@ -25,7 +26,8 @@ FitAllanGyr::FitAllanGyr( std::vector< double > sigma2s, std::vector< double > t
     for ( int i = 0; i < num_samples; ++i )
     {
 
-        //        std::cout << "sigma " << i << " " << taus[i] << " " << sigma2s[i] << std::endl;
+        //        std::cout << "sigma " << i << " " << taus[i] << " " << sigma2s[i] <<
+        //        std::endl;
 
         ceres::CostFunction* f = new ceres::AutoDiffCostFunction< AllanSigmaError, 1, 5 >(
         new AllanSigmaError( sigma2s[i], taus[i] ) );
@@ -112,6 +114,18 @@ FitAllanGyr::calcSimDeviation( const std::vector< double > taus ) const
     for ( auto& tau : taus )
         des.push_back( sqrt( calcSigma2( Q, N, B, K, R, tau ) ) );
     return des;
+}
+
+double
+FitAllanGyr::getBiasInstability( ) const
+{
+    return findMinNum( calcSimDeviation( m_taus ) ) / ( 57.3 * 3600 );
+}
+
+double
+FitAllanGyr::getWhiteNoise( ) const
+{
+    return sqrt( freq ) * sqrt( calcSigma2( Q, N, B, K, R, 1 ) ) / ( 57.3 * 3600 );
 }
 
 double

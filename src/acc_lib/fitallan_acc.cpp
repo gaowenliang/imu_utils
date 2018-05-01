@@ -2,12 +2,13 @@
 
 using namespace imu;
 
-FitAllanAcc::FitAllanAcc( std::vector< double > sigma2s, std::vector< double > taus )
+FitAllanAcc::FitAllanAcc( std::vector< double > sigma2s, std::vector< double > taus, double _freq )
 : Q( 0.0 )
 , N( 0.0 )
 , B( 0.0 )
 , K( 0.0 )
 , R( 0.0 )
+, freq( _freq )
 {
     if ( sigma2s.size( ) != taus.size( ) )
         std::cerr << "Error of point size" << std::endl;
@@ -25,7 +26,8 @@ FitAllanAcc::FitAllanAcc( std::vector< double > sigma2s, std::vector< double > t
     for ( int i = 0; i < num_samples; ++i )
     {
 
-        //        std::cout << "sigma " << i << " " << taus[i] << " " << sigma2s[i] << std::endl;
+        //        std::cout << "sigma " << i << " " << taus[i] << " " << sigma2s[i] <<
+        //        std::endl;
 
         ceres::CostFunction* f = new ceres::AutoDiffCostFunction< AllanSigmaError, 1, 5 >(
         new AllanSigmaError( sigma2s_tmp[i], m_taus[i] ) );
@@ -111,6 +113,48 @@ FitAllanAcc::calcSimDeviation( const std::vector< double > taus ) const
     for ( auto& tau : taus )
         des.push_back( sqrt( calcSigma2( Q, N, B, K, R, tau ) ) );
     return des;
+}
+
+double
+FitAllanAcc::getBiasInstability( ) const
+{
+    return findMinNum( calcSimDeviation( m_taus ) );
+}
+
+double
+FitAllanAcc::getWhiteNoise( ) const
+{
+    return sqrt( freq ) * sqrt( calcSigma2( Q, N, B, K, R, 1 ) );
+}
+
+std::vector< double >
+FitAllanAcc::checkData( std::vector< double > sigma2s, std::vector< double > taus )
+{
+    std::vector< double > sigma2s_tmp;
+    double data_tmp = 0;
+    //        bool is_first   = true;
+    for ( unsigned int index = 0; index < sigma2s.size( ); ++index )
+    {
+        if ( taus[index] < 1 )
+        {
+            if ( data_tmp < sigma2s[index] )
+            {
+                data_tmp = sigma2s[index];
+                continue;
+            }
+            else
+            {
+                sigma2s_tmp.push_back( sigma2s[index] );
+                m_taus.push_back( taus[index] );
+            }
+        }
+        else
+        {
+            sigma2s_tmp.push_back( sigma2s[index] );
+            m_taus.push_back( taus[index] );
+        }
+    }
+    return sigma2s_tmp;
 }
 
 double
