@@ -1,4 +1,4 @@
-#include "allan_acc.h".h "
+#include "allan_acc.h"
 
 imu::AllanAcc::AllanAcc( std::string name, int maxCluster )
 : m_name( name )
