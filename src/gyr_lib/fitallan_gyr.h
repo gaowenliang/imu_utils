@@ -50,8 +50,7 @@ class FitAllanGyr
             T _sigma2    = calcSigma2( _Q, _N, _B, _K, _R, _tau );
             T _dsigma2   = T( calcLog10( _sigma2 ) ) - T( calcLog10( sigma2 ) );
             residuals[0] = _dsigma2;
-            //            std::cout << "_err " << T( sigma2 ) << " " << _sigma2
-            //            << std::endl;
+            // std::cout << "_err " << T( sigma2 ) << " " << _sigma2 << std::endl;
 
             return true;
         }

@@ -25,9 +25,7 @@ FitAllanGyr::FitAllanGyr( std::vector< double > sigma2s, std::vector< double > t
 
     for ( int i = 0; i < num_samples; ++i )
     {
-
-        //        std::cout << "sigma " << i << " " << taus[i] << " " << sigma2s[i] <<
-        //        std::endl;
+        // std::cout << "sigma " << i << " " << taus[i] << " " << sigma2s[i] << std::endl;
 
         ceres::CostFunction* f = new ceres::AutoDiffCostFunction< AllanSigmaError, 1, 5 >(
         new AllanSigmaError( sigma2s[i], taus[i] ) );
@@ -57,8 +55,11 @@ FitAllanGyr::FitAllanGyr( std::vector< double > sigma2s, std::vector< double > t
     //           << " " << K  //
     //           << " " << R << std::endl;
 
+    std::cout << " Bias Instability " << getB( ) / ( 57.3 * 3600 ) << " rad/s" << std::endl;
     std::cout << " Bias Instability " << getBiasInstability( ) << " rad/s, at "
               << taus[findMinIndex( calcSimDeviation( taus ) )] << " s" << std::endl;
+
+    std::cout << " White Noise " << sqrt( freq ) * getN( ) * 60 / 57.3 << " rad/s" << std::endl;
     std::cout << " White Noise " << getWhiteNoise( ) << " rad/s" << std::endl;
 }
 
@@ -87,7 +88,7 @@ FitAllanGyr::initValue( std::vector< double > sigma2s, std::vector< double > tau
     for ( unsigned int index = 0; index < taus.size( ); ++index )
         for ( int order_index = 0; order_index < 2 * m_order + 1; ++order_index )
         {
-            int kk = order_index - m_order;
+            int kk                  = order_index - m_order;
             F( index, order_index ) = pow( sqrt( taus[index] ), kk );
         }
     //        std::cout << "F " << F << std::endl;
@@ -191,33 +192,3 @@ FitAllanGyr::getQ( ) const
 {
     return sqrt( Q * Q ) / ( 3600.0 * sqrt( 3.0 ) );
 }
-
-// double
-// FitAllanGyr::getN( ) const
-//{
-//    return sqrt( N ) / 60.0;
-//}
-
-// double
-// FitAllanGyr::getB( ) const
-//{
-//    return sqrt( B ) / 0.6642824703;
-//}
-
-// double
-// FitAllanGyr::getK( ) const
-//{
-//    return 60.0 * sqrt( 3.0 * K );
-//}
-
-// double
-// FitAllanGyr::getR( ) const
-//{
-//    return 3600.0 * sqrt( 2.0 * R );
-//}
-
-// double
-// FitAllanGyr::getQ( ) const
-//{
-//    return sqrt( Q ) / ( 3600.0 * sqrt( 3.0 ) );
-//}
