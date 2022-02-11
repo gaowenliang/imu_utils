@@ -12,6 +12,7 @@
 #include <code_utils/ros_utils.h>
 #include <geometry_msgs/Vector3Stamped.h>
 #include <iostream>
+#include <fstream>
 #include <mutex>
 #include <opencv2/opencv.hpp>
 #include <queue>
