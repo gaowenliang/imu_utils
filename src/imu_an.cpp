@@ -19,9 +19,6 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Imu.h>
 
-std::mutex m_buf;
-
-std::queue< sensor_msgs::ImuConstPtr > imu_buf;
 imu::AllanGyr* gyr_x;
 imu::AllanGyr* gyr_y;
 imu::AllanGyr* gyr_z;
@@ -300,24 +297,35 @@ main( int argc, char** argv )
 
     std::cout << "acc X " << std::endl;
     imu::FitAllanAcc fit_acc_x( acc_v_x, acc_ts_x, acc_x->getFreq( ) );
+    std::cout << "  bias " << acc_x->getAvgValue( ) << " m/s^2" << std::endl;
     std::cout << "-------------------" << std::endl;
 
     std::cout << "acc y " << std::endl;
     imu::FitAllanAcc fit_acc_y( acc_v_y, acc_ts_y, acc_y->getFreq( ) );
+    std::cout << "  bias " << acc_y->getAvgValue( ) << " m/s^2" << std::endl;
     std::cout << "-------------------" << std::endl;
 
     std::cout << "acc z " << std::endl;
     imu::FitAllanAcc fit_acc_z( acc_v_z, acc_ts_z, acc_z->getFreq( ) );
+    std::cout << "  bias " << acc_z->getAvgValue( ) << " m/s^2" << std::endl;
     std::cout << "-------------------" << std::endl;
 
     std::vector< double > acc_sim_d_x = fit_acc_x.calcSimDeviation( acc_ts_x );
-    std::vector< double > acc_sim_d_y = fit_acc_y.calcSimDeviation( acc_ts_x );
-    std::vector< double > acc_sim_d_z = fit_acc_z.calcSimDeviation( acc_ts_x );
+    std::vector< double > acc_sim_d_y = fit_acc_y.calcSimDeviation( acc_ts_y );
+    std::vector< double > acc_sim_d_z = fit_acc_z.calcSimDeviation( acc_ts_z );
 
     writeData3( IMU_NAME + "_sim_acc", acc_ts_x, acc_sim_d_x, acc_sim_d_y, acc_sim_d_z );
     writeData3( IMU_NAME + "_acc", acc_ts_x, acc_d_x, acc_d_y, acc_d_z );
 
     writeYAML( data_save_path, IMU_NAME, fit_gyr_x, fit_gyr_y, fit_gyr_z, fit_acc_x, fit_acc_y, fit_acc_z );
+
+    // Clean up dynamically allocated memory
+    delete gyr_x;
+    delete gyr_y;
+    delete gyr_z;
+    delete acc_x;
+    delete acc_y;
+    delete acc_z;
 
     return 0;
 }

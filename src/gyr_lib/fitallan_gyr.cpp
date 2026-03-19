@@ -98,7 +98,8 @@ FitAllanGyr::initValue( std::vector< double > sigma2s, std::vector< double > tau
     //        std::cout << "B " << B << std::endl;
     //        std::cout << "A " << A << std::endl;
 
-    Eigen::MatrixXd C = A.inverse( ) * B;
+    // Use QR decomposition for numerical stability instead of direct inverse
+    Eigen::MatrixXd C = A.colPivHouseholderQr( ).solve( B );
     std::cout << "C " << C.transpose( ) << std::endl;
 
     std::vector< double > init;
